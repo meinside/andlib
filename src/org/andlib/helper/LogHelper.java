@@ -27,34 +27,75 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-package kr.pe.meinside.android.ui.controller.handler;
-
-import android.os.Message;
+package org.andlib.helper;
 
 /**
- * Do actual jobs(especially UI related stuffs) for UI controllers.
  * 
  * @author meinside@gmail.com
- * @since 09.11.20.
+ * @since 09.10.12.
  * 
- * last update 10.02.23.
+ * last update 09.11.26.
  *
  */
-public abstract class ContentsHandlerWorker
+final public class LogHelper
 {
-	protected int id = getId();
-
-	/**
-	 * implement this to access UI elements
-	 * (should send message to the ContentsHandler to fire this method)
-	 * 
-	 * @param msg
-	 */
-	public abstract void doSomething(Message msg);
+	public static final int SHOW_MINIMAL = 1;
+	public static final int SHOW_CLASS = SHOW_MINIMAL >> 1;
+	public static final int SHOW_LINENUMBER = SHOW_MINIMAL >> 2;
 	
-	/**
-	 * 
-	 * @return unique id of this worker
-	 */
-	public abstract int getId();
+	public static final int SHOW_DEFAULT = SHOW_CLASS | SHOW_LINENUMBER;
+	
+	public static String where()
+	{
+		StackTraceElement stack = new Throwable().getStackTrace()[1];
+		StringBuffer buffer = new StringBuffer();
+		
+		//class name
+		String className = stack.getClassName();
+		int indexOfPoint;
+		if((indexOfPoint = className.lastIndexOf(".")) != -1)
+		{
+			className = className.substring(indexOfPoint + 1);
+		}
+		buffer.append(className);
+		buffer.append(".");
+		
+		//method name
+		buffer.append(stack.getMethodName());
+		buffer.append("()");
+		
+		return buffer.toString();
+	}
+	
+	public static String where(int option)
+	{
+		StackTraceElement stack = new Throwable().getStackTrace()[1];
+		StringBuffer buffer = new StringBuffer();
+		
+		//class
+		if((option & SHOW_CLASS) == SHOW_CLASS)
+		{
+			String className = stack.getClassName();
+			int indexOfPoint;
+			if((indexOfPoint = className.lastIndexOf(".")) != -1)
+			{
+				className = className.substring(indexOfPoint + 1);
+			}
+			buffer.append(className);
+			buffer.append(".");
+		}
+		
+		//method name
+		buffer.append(stack.getMethodName());
+		buffer.append("()");
+		
+		//line number
+		if((option & SHOW_LINENUMBER) == SHOW_LINENUMBER)
+		{
+			buffer.append(": Line ");
+			buffer.append(stack.getLineNumber());
+		}
+		
+		return buffer.toString();
+	}
 }

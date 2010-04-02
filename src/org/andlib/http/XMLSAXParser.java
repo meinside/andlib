@@ -27,7 +27,7 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-package kr.pe.meinside.android.http;
+package org.andlib.http;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,8 +37,8 @@ import java.net.URL;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import kr.pe.meinside.android.helper.LogHelper;
 
+import org.andlib.helper.LogHelper;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;

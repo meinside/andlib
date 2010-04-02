@@ -27,13 +27,14 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-package kr.pe.meinside.android.ui.controller;
+package org.andlib.ui.controller;
 
 import java.util.ArrayList;
 
-import kr.pe.meinside.android.helper.LogHelper;
-import kr.pe.meinside.android.ui.controller.handler.ContentsHandler;
-import kr.pe.meinside.android.ui.controller.handler.ContentsHandlerWorker;
+import org.andlib.helper.LogHelper;
+import org.andlib.ui.controller.handler.ContentsHandler;
+import org.andlib.ui.controller.handler.ContentsHandlerWorker;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

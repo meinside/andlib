@@ -27,7 +27,7 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-package kr.pe.meinside.android.helper;
+package org.andlib.helper;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;

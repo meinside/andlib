@@ -27,9 +27,10 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-package kr.pe.meinside.android.ui;
+package org.andlib.ui;
 
-import kr.pe.meinside.android.helper.LogHelper;
+import org.andlib.helper.LogHelper;
+
 import android.content.Context;
 import android.hardware.Camera;
 import android.util.AttributeSet;

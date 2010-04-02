@@ -27,11 +27,12 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-package kr.pe.meinside.android.ui;
+package org.andlib.ui;
 
 import java.io.FileOutputStream;
 
-import kr.pe.meinside.android.helper.LogHelper;
+import org.andlib.helper.LogHelper;
+
 
 import android.content.Context;
 import android.graphics.Bitmap;

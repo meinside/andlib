@@ -27,16 +27,16 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-package kr.pe.meinside.android.http.services;
+package org.andlib.http.services;
 
 import java.io.File;
 import java.util.HashMap;
 
-import kr.pe.meinside.android.http.ApacheHttpUtility;
-import kr.pe.meinside.android.http.HttpUtility;
-import kr.pe.meinside.android.http.OAuthHelper;
-import kr.pe.meinside.android.http.XMLDOMParser;
 
+import org.andlib.http.ApacheHttpUtility;
+import org.andlib.http.HttpUtility;
+import org.andlib.http.OAuthHelper;
+import org.andlib.http.XMLDOMParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -86,7 +86,7 @@ public class TwitterHelper extends OAuthHelper
 	}
 
 	/* (non-Javadoc)
-	 * @see kr.pe.meinside.android.http.OAuthHelper#retrieveValuesAfterAuthorization(java.util.HashMap)
+	 * @see org.andlib.http.OAuthHelper#retrieveValuesAfterAuthorization(java.util.HashMap)
 	 */
 	@Override
 	protected void retrieveValuesAfterAuthorization(HashMap<String, String> values)
@@ -180,7 +180,7 @@ public class TwitterHelper extends OAuthHelper
 		params.put("verify_url", verifyUrl);
 
 		//FIXXX: i don't get why multi-part file uploading does not work with HttpUtility but with ApacheHttpUtility
-		kr.pe.meinside.android.http.ApacheHttpUtility.SimpleHttpResponse response = ApacheHttpUtility.getInstance().post("http://yfrog.com/api/upload", null, params);
+		org.andlib.http.ApacheHttpUtility.SimpleHttpResponse response = ApacheHttpUtility.getInstance().post("http://yfrog.com/api/upload", null, params);
 		if(response != null && response.getHttpStatusCode() == 200)
 		{
 			return extractMediaUrlFromYfrogResponse(response.getHttpResponseBody());
@@ -209,7 +209,7 @@ public class TwitterHelper extends OAuthHelper
 		params.put("url", url);
 		params.put("verify_url", getVerifyURLForYfrog());
 
-		kr.pe.meinside.android.http.HttpUtility.SimpleHttpResponse response = HttpUtility.getInstance().post("http://yfrog.com/api/upload", null, params);
+		org.andlib.http.HttpUtility.SimpleHttpResponse response = HttpUtility.getInstance().post("http://yfrog.com/api/upload", null, params);
 		if(response != null && response.getHttpStatusCode() == 200)
 		{
 			return extractMediaUrlFromYfrogResponse(response.getHttpResponseBodyAsString());

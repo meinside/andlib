@@ -27,7 +27,7 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-package kr.pe.meinside.android.http;
+package org.andlib.http;
 
 import java.io.File;
 import java.net.URI;
@@ -35,9 +35,10 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.TreeSet;
 
-import kr.pe.meinside.android.helper.LogHelper;
-import kr.pe.meinside.android.helper.StringCodec;
-import kr.pe.meinside.android.http.HttpUtility.SimpleHttpResponse;
+import org.andlib.helper.LogHelper;
+import org.andlib.helper.StringCodec;
+import org.andlib.http.HttpUtility.SimpleHttpResponse;
+
 import android.util.Log;
 
 /**

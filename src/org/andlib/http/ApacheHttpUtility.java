@@ -27,7 +27,7 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-package kr.pe.meinside.android.http;
+package org.andlib.http;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,9 +35,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
 
-import kr.pe.meinside.android.helper.LogHelper;
-import kr.pe.meinside.android.helper.StringCodec;
 
+import org.andlib.helper.LogHelper;
+import org.andlib.helper.StringCodec;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;

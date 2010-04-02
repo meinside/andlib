@@ -27,9 +27,9 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-package kr.pe.meinside.android.ui.controller;
+package org.andlib.ui.controller;
 
-import kr.pe.meinside.android.ui.controller.handler.ContentsHandlerWorker;
+import org.andlib.ui.controller.handler.ContentsHandlerWorker;
 
 import android.view.View;
 

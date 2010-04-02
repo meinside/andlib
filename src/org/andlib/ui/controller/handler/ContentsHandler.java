@@ -27,11 +27,12 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-package kr.pe.meinside.android.ui.controller.handler;
+package org.andlib.ui.controller.handler;
 
-import kr.pe.meinside.android.helper.LogHelper;
 
 import java.util.HashMap;
+
+import org.andlib.helper.LogHelper;
 
 import android.os.Handler;
 import android.os.Message;

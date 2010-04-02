@@ -29,7 +29,8 @@
 
 package outsourced.image.filter.base;
 
-import kr.pe.meinside.android.helper.LogHelper;
+import org.andlib.helper.LogHelper;
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;

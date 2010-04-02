@@ -27,7 +27,7 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-package kr.pe.meinside.android.http;
+package org.andlib.http;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
@@ -42,9 +42,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kr.pe.meinside.android.helper.LogHelper;
-import kr.pe.meinside.android.helper.StringCodec;
 
+import org.andlib.helper.LogHelper;
+import org.andlib.helper.StringCodec;
 import org.apache.http.util.ByteArrayBuffer;
 
 import android.os.AsyncTask;
@@ -792,7 +792,7 @@ final public class HttpUtility
 	 * last update 10.01.21.
 	 *
 	 */
-	public class AsyncHttpTask extends AsyncTask<Object, Void, kr.pe.meinside.android.http.HttpUtility.SimpleHttpResponse>
+	public class AsyncHttpTask extends AsyncTask<Object, Void, org.andlib.http.HttpUtility.SimpleHttpResponse>
 	{
 		private String _id;
 		private Handler resultHandler;
