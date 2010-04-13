@@ -32,16 +32,17 @@ package outsourced.image.filter.base;
 import org.andlib.helper.LogHelper;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 /**
  * 
  * ported from: http://www.gdargaud.net/Hack/SourceCode.html#GraphicFilter
  * 
+ * XXX: needs optimization
+ * 
  * @author meinside@gmail.com
  * @since 10.03.05.
  * 
- * last update 10.03.08.
+ * last update 10.04.13.
  */
 public abstract class FilterBase
 {
@@ -117,7 +118,7 @@ public abstract class FilterBase
 		else if(config.equals(Bitmap.Config.RGB_565))
 			pixDepth = 16;
 		else
-			Log.e(LogHelper.where(), "no matching Bitmap.Config");
+			LogHelper.e("no matching Bitmap.Config");
 		return pixDepth;
 	}
 }

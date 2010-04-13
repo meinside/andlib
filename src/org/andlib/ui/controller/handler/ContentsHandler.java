@@ -36,7 +36,6 @@ import org.andlib.helper.LogHelper;
 
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 
 /**
@@ -45,7 +44,7 @@ import android.util.Log;
  * @author meinside@gmail.com
  * @since 09.11.20.
  * 
- * last update 10.02.23.
+ * last update 10.04.13.
  *
  */
 final public class ContentsHandler extends Handler
@@ -83,13 +82,13 @@ final public class ContentsHandler extends Handler
     {
     	int workerId = msg.getData().getInt(KEY_WORKER_ID); 
 
-    	Log.v(LogHelper.where(), "handling message for worker with id:" + workerId);
+    	LogHelper.v("handling message for worker with id:" + workerId);
 
     	ContentsHandlerWorker worker = workerMap.get(workerId);
     	if(worker != null)
     		worker.doSomething(msg);
     	else
-    		Log.d(LogHelper.where(), "no such worker with id: " + workerId);
+    		LogHelper.d("no such worker with id: " + workerId);
     }
 	
     /**
@@ -101,7 +100,7 @@ final public class ContentsHandler extends Handler
     {
     	if(worker != null)
     	{
-    		Log.v(LogHelper.where(), "adding a worker with id: " + worker.getId());
+    		LogHelper.v("adding a worker with id: " + worker.getId());
     		
     		workerMap.put(worker.getId(), worker);
     	}
@@ -114,8 +113,8 @@ final public class ContentsHandler extends Handler
     synchronized public void removeWorker(int id)
     {
     	if(workerMap.remove(id) == null)
-    		Log.d(LogHelper.where(), "no such worker with id: " + id);
+    		LogHelper.d("no such worker with id: " + id);
     	else
-    		Log.v(LogHelper.where(), "removing a worker with id: " + id);
+    		LogHelper.v("removing a worker with id: " + id);
     }
 }

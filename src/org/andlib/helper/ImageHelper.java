@@ -43,7 +43,6 @@ import outsourced.image.filter.base.FilterBase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -51,7 +50,7 @@ import android.view.View;
  * @author meinside@gmail.com
  * @since 09.10.12.
  * 
- * last update 10.03.08.
+ * last update 10.04.13.
  *
  */
 final public class ImageHelper
@@ -79,7 +78,7 @@ final public class ImageHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		
 		return null;
@@ -101,7 +100,7 @@ final public class ImageHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		
 		return null;
@@ -120,7 +119,7 @@ final public class ImageHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		
 		return null;
@@ -143,7 +142,7 @@ final public class ImageHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		
 		return null;
@@ -164,7 +163,7 @@ final public class ImageHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		
 		return null;
@@ -186,7 +185,7 @@ final public class ImageHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		
 		return result;
@@ -211,7 +210,7 @@ final public class ImageHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		
 		return false;
@@ -260,7 +259,7 @@ final public class ImageHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		finally
 		{
@@ -272,7 +271,7 @@ final public class ImageHelper
 				}
 				catch(IOException e)
 				{
-					Log.e(LogHelper.where(), e.getMessage(), e);
+					LogHelper.e(e.toString());
 				}
 			}
 		}

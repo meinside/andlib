@@ -42,7 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.andlib.helper.LogHelper;
 import org.andlib.helper.StringCodec;
 import org.apache.http.util.ByteArrayBuffer;
@@ -51,7 +50,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 /**
@@ -59,7 +57,7 @@ import android.webkit.MimeTypeMap;
  * @author meinside@gmail.com
  * @since 09.10.05.
  * 
- * last update 10.01.22.
+ * last update 10.04.13.
  *
  */
 final public class HttpUtility
@@ -205,7 +203,7 @@ final public class HttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			if(connection != null)
 				connection.disconnect();
 			return null;
@@ -226,7 +224,7 @@ final public class HttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			try
 			{
 				int responseCode = connection.getResponseCode();
@@ -235,7 +233,7 @@ final public class HttpUtility
 			}
 			catch(IOException ioe)
 			{
-				Log.e(LogHelper.where(), ioe.toString());
+				LogHelper.e(ioe.toString());
 			}
 		}
 		finally
@@ -271,7 +269,7 @@ final public class HttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			if(connection != null)
 				connection.disconnect();
 			return null;
@@ -363,7 +361,7 @@ final public class HttpUtility
 			}
 			catch(Exception e)
 			{
-				Log.e(LogHelper.where(), e.toString());
+				LogHelper.e(e.toString());
 				connection.disconnect();
 				return null;
 			}
@@ -379,7 +377,7 @@ final public class HttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			try
 			{
 				int responseCode = connection.getResponseCode();
@@ -388,7 +386,7 @@ final public class HttpUtility
 			}
 			catch(IOException ioe)
 			{
-				Log.e(LogHelper.where(), ioe.toString());
+				LogHelper.e(ioe.toString());
 			}
 		}
 		finally
@@ -428,7 +426,7 @@ final public class HttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			if(connection != null)
 				connection.disconnect();
 			return null;
@@ -449,7 +447,7 @@ final public class HttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			connection.disconnect();
 			return null;
 		}
@@ -464,7 +462,7 @@ final public class HttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			try
 			{
 				int responseCode = connection.getResponseCode();
@@ -473,7 +471,7 @@ final public class HttpUtility
 			}
 			catch(IOException ioe)
 			{
-				Log.e(LogHelper.where(), ioe.toString());
+				LogHelper.e(ioe.toString());
 			}
 		}
 		finally
@@ -564,7 +562,7 @@ final public class HttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		
 		return null;
@@ -605,7 +603,7 @@ final public class HttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		
 		return null;
@@ -626,7 +624,7 @@ final public class HttpUtility
 		}
 		catch(IOException e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		if(mimeType == null)
 			mimeType = "application/octet-stream";

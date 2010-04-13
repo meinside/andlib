@@ -34,7 +34,6 @@ import org.andlib.helper.LogHelper;
 import android.content.Context;
 import android.hardware.Camera;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -43,14 +42,11 @@ import android.view.SurfaceView;
  * @author meinside@gmail.com
  * @since 10.03.17.
  * 
- * last update 10.03.17.
+ * last update 10.04.13.
  *
  */
 public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Camera.PictureCallback, Camera.ShutterCallback
 {
-	public static final int IMAGE_MAX_WIDTH = 640;
-	public static final int IMAGE_MAX_HEIGHT = 480;
-
 	private static SurfaceHolder holder = null;
 	private static Camera camera = null;
 
@@ -93,7 +89,7 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 	 */
 	private void initialize(Context context)
 	{
-		Log.v(LogHelper.where(), "initialize");
+		LogHelper.v("initialize");
 		
 		holder = getHolder();
 		holder.addCallback(this);
@@ -103,7 +99,7 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
 	{
-		Log.v(LogHelper.where(), "surfaceChanged");
+		LogHelper.v("surfaceChanged");
 		
 		Camera.Parameters params = camera.getParameters();
 		params.setPreviewSize(width, height);
@@ -114,7 +110,7 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
-		Log.v(LogHelper.where(), "surfaceCreated");
+		LogHelper.v("surfaceCreated");
 
 		try
 		{
@@ -123,14 +119,14 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder)
 	{
-		Log.v(LogHelper.where(), "surfaceDestroyed");
+		LogHelper.v("surfaceDestroyed");
 		
 		if(camera != null)
 		{
@@ -146,7 +142,7 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 	 */
 	public boolean capture()
 	{
-		Log.v(LogHelper.where(), "shutter clicked");
+		LogHelper.v("shutter clicked");
 
 		if(camera != null)
 		{
@@ -161,4 +157,13 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 	 */
 	@Override
 	abstract public void onPictureTaken(byte[] data, Camera camera);
+
+	/**
+	 * implement this to do something when shutter
+	 * 
+	 * XXX: functions such as Camera.Parameters.setPictureSize() should be called here
+	 * (cause: http://groups.google.com/group/android-developers/browse_thread/thread/8ab0cb7a7e243d98 )
+	 */
+	@Override
+	abstract public void onShutter();
 }

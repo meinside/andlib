@@ -39,14 +39,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 /**
  * 
  * @author meinside@gmail.com
  * @since 10.01.07.
  * 
- * last update 10.01.07.
+ * last update 10.04.13.
  *
  */
 public class DeviceHelper
@@ -278,7 +277,7 @@ public class DeviceHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return false;
 	}
@@ -295,7 +294,7 @@ public class DeviceHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return false;
 	}
@@ -312,7 +311,7 @@ public class DeviceHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return false;
 	}
@@ -329,7 +328,7 @@ public class DeviceHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return false;
 	}

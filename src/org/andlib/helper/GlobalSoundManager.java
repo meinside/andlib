@@ -35,7 +35,6 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.net.Uri;
-import android.util.Log;
 
 /**
  * for playing sounds globally (only one sound at a time)
@@ -46,7 +45,7 @@ import android.util.Log;
  * @author meinside@gmail.com
  * @since 10.02.28.
  * 
- * last update 10.02.28.
+ * last update 10.04.13.
  *
  */
 public class GlobalSoundManager
@@ -118,7 +117,7 @@ public class GlobalSoundManager
 	 */
 	synchronized public void play(Context context, int resid)
 	{
-		Log.v(LogHelper.where(), "trying to play: " + resid);
+		LogHelper.v("trying to play: " + resid);
 
 		stop();
 
@@ -130,7 +129,7 @@ public class GlobalSoundManager
         }
         catch(Exception e)
         {
-        	Log.e(LogHelper.where(), e.toString());
+        	LogHelper.e(e.toString());
         }
 	}
 	
@@ -142,7 +141,7 @@ public class GlobalSoundManager
 	 */
 	synchronized public void play(Context context, String filename)
 	{
-		Log.v(LogHelper.where(), "trying to play: " + filename);
+		LogHelper.v("trying to play: " + filename);
 
 		stop();
 		
@@ -159,7 +158,7 @@ public class GlobalSoundManager
         }
         catch(Exception e)
         {
-        	Log.e(LogHelper.where(), e.toString());
+        	LogHelper.e(e.toString());
         }
 	}
 	
@@ -170,7 +169,7 @@ public class GlobalSoundManager
 	 */
 	synchronized public void play(String filepath)
 	{
-		Log.v(LogHelper.where(), "trying to play: " + filepath);
+		LogHelper.v("trying to play: " + filepath);
 		
 		stop();
 		
@@ -184,7 +183,7 @@ public class GlobalSoundManager
         }
         catch(Exception e)
         {
-        	Log.e(LogHelper.where(), e.toString());
+        	LogHelper.e(e.toString());
         }
 	}
 	
@@ -196,7 +195,7 @@ public class GlobalSoundManager
 	 */
 	synchronized public void play(Context context, Uri fileuri)
 	{
-		Log.v(LogHelper.where(), "trying to play: " + fileuri.toString());
+		LogHelper.v("trying to play: " + fileuri.toString());
 
 		stop();
 		
@@ -208,7 +207,7 @@ public class GlobalSoundManager
         }
         catch(Exception e)
         {
-        	Log.e(LogHelper.where(), e.toString());
+        	LogHelper.e(e.toString());
         }
 	}
 	
@@ -225,13 +224,13 @@ public class GlobalSoundManager
 				{
 					player.stop();
 					
-					Log.v(LogHelper.where(), "stopped previously played sound");
+					LogHelper.v("stopped previously played sound");
 				}
 			}
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		finally
 		{

@@ -43,7 +43,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils.TruncateAt;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -60,7 +59,7 @@ import android.widget.LinearLayout.LayoutParams;
  * @author meinside@gmail.com
  * @since 09.11.19.
  * 
- * last update 10.03.04.
+ * last update 10.04.13.
  * 
  * 
  * 
@@ -273,7 +272,7 @@ public abstract class SimpleNavigationControllerActivity extends Activity
 	 */
 	final public void reloadNavigationBar()
 	{
-		Log.v(LogHelper.where(), "reloading nav bar: controllers.size = " + controllers.size() + ", index = " + controllerIndex + ", remove = " + controllers.get(controllerIndex).checkRemoveWhenUnused());
+		LogHelper.v("reloading nav bar: controllers.size = " + controllers.size() + ", index = " + controllerIndex + ", remove = " + controllers.get(controllerIndex).checkRemoveWhenUnused());
 		
 		//check current view controller and set/enable/disable buttons and title text
 		if(controllers.size() > 0)
@@ -334,7 +333,7 @@ public abstract class SimpleNavigationControllerActivity extends Activity
 	 */
 	final public void reloadContentView()
 	{
-		Log.v(LogHelper.where(), "reloading content view with index: " + getCurrentControllerIndex());
+		LogHelper.v("reloading content view with index: " + getCurrentControllerIndex());
 
 		getCurrentController().reload();
 	}
@@ -346,11 +345,11 @@ public abstract class SimpleNavigationControllerActivity extends Activity
 	 */
 	final public synchronized void addNavigationController(SimpleNavigationController controller, boolean reload)
 	{
-		Log.v(LogHelper.where(), "adding a controller: " + controller.getTitle());
+		LogHelper.v("adding a controller: " + controller.getTitle());
 		
     	if(controllers.size() -1 > controllerIndex)	//if there are 'next' controllers left after this one,
     	{
-    		Log.v(LogHelper.where(), "next controllers will be removed");
+    		LogHelper.v("next controllers will be removed");
 
     		for(int i = controllers.size() - 1; i > controllerIndex; i--)
         		removeThingsAtIndex(i);
@@ -364,7 +363,7 @@ public abstract class SimpleNavigationControllerActivity extends Activity
 		{
 			handler.addWorker(worker);
 			
-			Log.v(LogHelper.where(), "added a worker: " + worker.getId() + " (total: " + handler.workerMap.size() + ")");
+			LogHelper.v("added a worker: " + worker.getId() + " (total: " + handler.workerMap.size() + ")");
 		}
 
 		//add to view flipper
@@ -387,7 +386,7 @@ public abstract class SimpleNavigationControllerActivity extends Activity
 	 */
 	private void removeThingsAtIndex(int index)
 	{
-		Log.v(LogHelper.where(), "removing controller/worker/view at index: " + index);
+		LogHelper.v("removing controller/worker/view at index: " + index);
 		
 		//remove unused view from view flipper
 		viewFlipper.removeViewAt(index);
@@ -444,7 +443,7 @@ public abstract class SimpleNavigationControllerActivity extends Activity
     @Override
     final protected void onCreate(Bundle savedInstanceState)
     {
-		Log.v(LogHelper.where(), "onCreate called");
+		LogHelper.v("onCreate called");
 
 	    //- initialize parameters
     	context = getApplicationContext();
@@ -555,7 +554,7 @@ public abstract class SimpleNavigationControllerActivity extends Activity
     @Override
     protected void onResume()
     {
-		Log.v(LogHelper.where(), "onResume called");
+		LogHelper.v("onResume called");
 
 	    super.onResume();
         reloadNavigationBar();
@@ -567,7 +566,7 @@ public abstract class SimpleNavigationControllerActivity extends Activity
 	@Override
 	public void onConfigurationChanged(Configuration newConfig)
 	{
-		Log.v(LogHelper.where(), "onConfigurationChanged called");
+		LogHelper.v("onConfigurationChanged called");
 
 		super.onConfigurationChanged(newConfig);
 	}
@@ -578,7 +577,7 @@ public abstract class SimpleNavigationControllerActivity extends Activity
 	@Override
 	protected void onDestroy()
 	{
-		Log.v(LogHelper.where(), "onDestroy called");
+		LogHelper.v("onDestroy called");
 
 		super.onDestroy();
 	}
@@ -597,7 +596,7 @@ public abstract class SimpleNavigationControllerActivity extends Activity
 
         	if(controller.checkRemoveWhenUnused())
         	{
-        		Log.v(LogHelper.where(), "current(or more) controller will be removed:" + controller.getTitle());
+        		LogHelper.v("current(or more) controller will be removed:" + controller.getTitle());
 
         		for(int i = controllers.size() - 1; i >= controllerIndex; i--)
             		removeThingsAtIndex(i);
@@ -703,7 +702,7 @@ public abstract class SimpleNavigationControllerActivity extends Activity
      */
     protected void finishActivity()
     {
-		Log.v(LogHelper.where(), "finishing activity...");
+		LogHelper.v("finishing activity...");
 
     	finish();
     }

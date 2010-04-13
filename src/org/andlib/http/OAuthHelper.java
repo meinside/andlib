@@ -39,14 +39,12 @@ import org.andlib.helper.LogHelper;
 import org.andlib.helper.StringCodec;
 import org.andlib.http.HttpUtility.SimpleHttpResponse;
 
-import android.util.Log;
-
 /**
  * 
  * @author meinside@gmail.com
  * @since 09.10.07.
  * 
- * last update 10.01.14.
+ * last update 10.04.13.
  *
  */
 public class OAuthHelper
@@ -149,7 +147,7 @@ public class OAuthHelper
 			}
 			catch(Exception e)
 			{
-				Log.e(LogHelper.where(), e.toString());
+				LogHelper.e(e.toString());
 			}
 		}
 		return null;
@@ -309,7 +307,7 @@ public class OAuthHelper
 				return convertStringParamToMap(response.getHttpResponseBodyAsString());
 			}
 			else
-				Log.e(LogHelper.where(), "auth token request error: " + response.getHttpStatusCode() + " (" + response.getHttpResponseBodyAsString() + ")");
+				LogHelper.e("auth token request error: " + response.getHttpStatusCode() + " (" + response.getHttpResponseBodyAsString() + ")");
 		} 
 		return null;
 	}
@@ -345,7 +343,7 @@ public class OAuthHelper
 				return convertStringParamToMap(response.getHttpResponseBodyAsString());
 			}
 			else
-				Log.e(LogHelper.where(), "access token request error: " + response.getHttpStatusCode() + " (" + response.getHttpResponseBodyAsString() + ")");
+				LogHelper.e("access token request error: " + response.getHttpStatusCode() + " (" + response.getHttpResponseBodyAsString() + ")");
 		} 
 		return null;
 	}
@@ -388,7 +386,7 @@ public class OAuthHelper
 			return true;
 		}
 		else
-			Log.e(LogHelper.where(), "authorize with oauth verifier failed");
+			LogHelper.e("authorize with oauth verifier failed");
 		return false;
 	}
 	
@@ -456,7 +454,7 @@ public class OAuthHelper
 			if(response.getHttpStatusCode() == 200)
 				return response;
 			else
-				Log.e(LogHelper.where(), "get error: " + response.getHttpStatusCode() + " (" + response.getHttpResponseBodyAsString() + ")");
+				LogHelper.e("get error: " + response.getHttpStatusCode() + " (" + response.getHttpResponseBodyAsString() + ")");
 		}
 		return null;
 	}
@@ -520,7 +518,7 @@ public class OAuthHelper
 			if(response.getHttpStatusCode() == 200)
 				return response;
 			else
-				Log.e(LogHelper.where(), "post error: " + response.getHttpStatusCode() + " (" + response.getHttpResponseBodyAsString() + ")");
+				LogHelper.e("post error: " + response.getHttpStatusCode() + " (" + response.getHttpResponseBodyAsString() + ")");
 		}
 		return null;
 	}

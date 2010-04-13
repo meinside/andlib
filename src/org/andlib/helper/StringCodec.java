@@ -51,14 +51,12 @@ import javax.crypto.spec.SecretKeySpec;
 
 import outsourced.Base64Coder;
 
-import android.util.Log;
-
 /**
  * 
  * @author meinside@gmail.com
  * @since 09.11.24.
  * 
- * last update 09.12.22.
+ * last update 10.04.13.
  *
  */
 final public class StringCodec
@@ -78,7 +76,7 @@ final public class StringCodec
 		}
 		catch(UnsupportedEncodingException e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}
@@ -96,7 +94,7 @@ final public class StringCodec
 		}
 		catch(UnsupportedEncodingException e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}
@@ -129,7 +127,7 @@ final public class StringCodec
 		}
 		catch (Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}
@@ -152,7 +150,7 @@ final public class StringCodec
 		}
 		catch(NoSuchAlgorithmException e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}
@@ -179,12 +177,12 @@ final public class StringCodec
 	{
 		if(key == null || (key.length != 16 && key.length != 24 && key.length != 32))
 		{
-			Log.e(LogHelper.where(), "key's bit length is not 128/192/256");
+			LogHelper.e("key's bit length is not 128/192/256");
 			return null;
 		}
 		if(iv != null && iv.length != 16)
 		{
-			Log.e(LogHelper.where(), "iv's bit length is not 16");
+			LogHelper.e("iv's bit length is not 16");
 			return null;
 		}
 
@@ -209,7 +207,7 @@ final public class StringCodec
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}
@@ -226,12 +224,12 @@ final public class StringCodec
 	{
 		if(key == null || (key.length != 16 && key.length != 24 && key.length != 32))
 		{
-			Log.e(LogHelper.where(), "key's bit length is not 128/192/256");
+			LogHelper.e("key's bit length is not 128/192/256");
 			return null;
 		}
 		if(iv != null && iv.length != 16)
 		{
-			Log.e(LogHelper.where(), "iv's bit length is not 16");
+			LogHelper.e("iv's bit length is not 16");
 			return null;
 		}
 
@@ -256,7 +254,7 @@ final public class StringCodec
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}
@@ -280,7 +278,7 @@ final public class StringCodec
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return keys;
 	}
@@ -300,7 +298,7 @@ final public class StringCodec
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}
@@ -320,7 +318,7 @@ final public class StringCodec
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}
@@ -342,7 +340,7 @@ final public class StringCodec
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}
@@ -364,7 +362,7 @@ final public class StringCodec
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}

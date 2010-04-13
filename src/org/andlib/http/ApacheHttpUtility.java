@@ -35,7 +35,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
 
-
 import org.andlib.helper.LogHelper;
 import org.andlib.helper.StringCodec;
 import org.apache.http.HttpEntity;
@@ -53,7 +52,6 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 /*
@@ -68,7 +66,7 @@ import android.webkit.MimeTypeMap;
  * @author meinside@gmail.com
  * @since 10.01.13.
  * 
- * last update 10.01.14.
+ * last update 10.04.13.
  *
  */
 final public class ApacheHttpUtility
@@ -214,7 +212,7 @@ final public class ApacheHttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		finally
 		{
@@ -313,7 +311,7 @@ final public class ApacheHttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		finally
 		{
@@ -382,7 +380,7 @@ final public class ApacheHttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		finally
 		{
@@ -427,7 +425,7 @@ final public class ApacheHttpUtility
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		
 		return null;
@@ -447,7 +445,7 @@ final public class ApacheHttpUtility
 		}
 		catch(IOException e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		if(mimeType == null)
 			mimeType = "application/octet-stream";

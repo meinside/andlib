@@ -37,20 +37,17 @@ import java.net.URL;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-
 import org.andlib.helper.LogHelper;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-
-import android.util.Log;
 
 /**
  * 
  * @author meinside@gmail.com
  * @since 09.10.07.
  * 
- * last update 09.11.22.
+ * last update 10.04.13.
  *
  */
 public class XMLSAXParser
@@ -71,7 +68,7 @@ public class XMLSAXParser
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 	}
 	
@@ -107,7 +104,7 @@ public class XMLSAXParser
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			return false;
 		}
 	}
@@ -126,7 +123,7 @@ public class XMLSAXParser
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			return false;
 		}
 	}
@@ -145,7 +142,7 @@ public class XMLSAXParser
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			return false;
 		}
 	}

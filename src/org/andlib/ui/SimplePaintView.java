@@ -33,7 +33,6 @@ import java.io.FileOutputStream;
 
 import org.andlib.helper.LogHelper;
 
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -41,7 +40,6 @@ import android.graphics.MaskFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -51,7 +49,7 @@ import android.view.View;
  * @author meinside@gmail.com
  * @since 10.01.26.
  * 
- * last update 10.01.27.
+ * last update 10.04.13.
  *
  */
 public class SimplePaintView extends View
@@ -247,7 +245,7 @@ public class SimplePaintView extends View
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		
 		return false;

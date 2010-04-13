@@ -33,16 +33,17 @@ import org.andlib.helper.LogHelper;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.util.Log;
 
 /**
  * 
  * ported from: http://www.gdargaud.net/Hack/SourceCode.html#GraphicFilter
  * 
+ * XXX: needs optimization
+ * 
  * @author meinside@gmail.com
  * @since 10.03.05.
  * 
- * last update 10.03.08.
+ * last update 10.04.13.
  */
 public class FilterIC extends FilterBase
 {
@@ -102,14 +103,14 @@ public class FilterIC extends FilterBase
 	@Override
 	public Bitmap filter(Bitmap bitmap)
 	{
-		Log.v(LogHelper.where(), name + ", multiplier: " + multiplier + ", divider: " + divider + ", bias: " + bias);
+		LogHelper.v(name + ", multiplier: " + multiplier + ", divider: " + divider + ", bias: " + bias);
 
 		int bytesPerPixel = getBitmapPixelDepth(bitmap) / 8;
 		int width = bitmap.getWidth();
 		int height = bitmap.getHeight();
 		if(bitmap == null || bytesPerPixel < 3)
 		{
-			Log.e(LogHelper.where(), "parameter error (bitmap null or bit depth too small)");
+			LogHelper.e("parameter error (bitmap null or bit depth too small)");
 			return null;
 		}
 
@@ -117,7 +118,7 @@ public class FilterIC extends FilterBase
 		{
 			if(div == 0)
 			{
-				Log.e(LogHelper.where(), "parameter error (dividers should not be zero)");
+				LogHelper.e("parameter error (dividers should not be zero)");
 				return null;
 			}
 		}

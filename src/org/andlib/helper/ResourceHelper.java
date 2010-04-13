@@ -33,14 +33,13 @@ import java.io.InputStream;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
-import android.util.Log;
 
 /**
  * 
  * @author meinside@gmail.com
  * @since 10.02.25.
  * 
- * last update 10.02.25.
+ * last update 10.04.13.
  *
  */
 public class ResourceHelper
@@ -72,7 +71,7 @@ public class ResourceHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}
@@ -92,7 +91,7 @@ public class ResourceHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}
@@ -111,7 +110,7 @@ public class ResourceHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}
@@ -131,7 +130,7 @@ public class ResourceHelper
 		}
 		catch(Exception e)
 		{
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 		}
 		return null;
 	}

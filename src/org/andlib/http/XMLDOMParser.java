@@ -36,12 +36,9 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-
 import org.andlib.helper.LogHelper;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-
-import android.util.Log;
 
 
 /**
@@ -49,7 +46,7 @@ import android.util.Log;
  * @author meinside@gmail.com
  * @since 09.10.07.
  * 
- * last update 09.11.22.
+ * last update 10.04.13.
  *
  */
 public class XMLDOMParser
@@ -69,7 +66,7 @@ public class XMLDOMParser
         }
         catch(Exception e)
         {
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
         }
 	}
 	
@@ -100,7 +97,7 @@ public class XMLDOMParser
         }
         catch(Exception e)
         {
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			return null;
         }
 	}
@@ -120,7 +117,7 @@ public class XMLDOMParser
         }
         catch(Exception e)
         {
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			return null;
         }
 	}
@@ -140,7 +137,7 @@ public class XMLDOMParser
         }
         catch(Exception e)
         {
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			return null;
         }
 	}
@@ -160,7 +157,7 @@ public class XMLDOMParser
         }
         catch(Exception e)
         {
-			Log.e(LogHelper.where(), e.toString());
+			LogHelper.e(e.toString());
 			return null;
         }
 	}
