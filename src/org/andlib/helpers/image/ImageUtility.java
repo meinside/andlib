@@ -57,7 +57,7 @@ import android.view.View;
  * last update 10.10.27.
  *
  */
-final public class ImageUtil
+final public class ImageUtility
 {
 	public static final int READ_BUFFER_SIZE = 32 * 1024;	//32KB
 
