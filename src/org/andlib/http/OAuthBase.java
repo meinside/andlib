@@ -38,16 +38,20 @@ import java.util.TreeSet;
 import org.andlib.helpers.Logger;
 import org.andlib.helpers.StringCodec;
 
+import android.os.Handler;
+
 /**
+ * OAuth base class
  * 
  * @author meinside@gmail.com
  * @since 09.10.07.
  * 
- * last update 10.10.26.
+ * last update 10.11.02.
  *
  */
 public class OAuthBase
 {
+	//long timeout seconds for slow mobile devices
 	public static final int OAUTH_DEFAULT_CONNECTION_TIMEOUT = 100000;
 	public static final int OAUTH_DEFAULT_SOCKET_TIMEOUT = 100000;
 	
@@ -67,6 +71,7 @@ public class OAuthBase
 	protected boolean isAuthorized = false;
 	
 	/**
+	 * default constructor (when not authorized yet)
 	 * 
 	 * @param consumerKey
 	 * @param consumerSecret
@@ -80,6 +85,7 @@ public class OAuthBase
 	}
 	
 	/**
+	 * default constructor (when already authorized)
 	 * 
 	 * @param consumerKey
 	 * @param consumerSecret
@@ -113,6 +119,7 @@ public class OAuthBase
 	
 	/**
 	 * converts string parameter to HashMap (ex: 'name1=value1&name2=value2&...' => ...)
+	 * 
 	 * @param parameter
 	 * @return
 	 */
@@ -135,6 +142,7 @@ public class OAuthBase
 	
 	/**
 	 * normalizes given url
+	 * 
 	 * @param url
 	 * @return null if fails
 	 */
@@ -173,6 +181,7 @@ public class OAuthBase
 	}
 	
 	/**
+	 * get normalized request parameter from given parameters
 	 * 
 	 * @param params
 	 * @param getOrPostParams
@@ -210,6 +219,7 @@ public class OAuthBase
 	}
 	
 	/**
+	 * generate base string for signature
 	 * 
 	 * @param method
 	 * @param url
@@ -234,6 +244,7 @@ public class OAuthBase
 	}
 	
 	/**
+	 * generate OAuth signature from signature base string
 	 * 
 	 * @param signatureBaseString
 	 * @return
@@ -253,6 +264,7 @@ public class OAuthBase
 	}
 	
 	/**
+	 * generate access signature from signature base string
 	 * 
 	 * @param signatureBaseString
 	 * @return
@@ -272,6 +284,7 @@ public class OAuthBase
 	}
 	
 	/**
+	 * generate auth header from given parameters
 	 * 
 	 * @param params
 	 * @return
@@ -299,6 +312,7 @@ public class OAuthBase
 	}
 
 	/**
+	 * request OAuth token
 	 * 
 	 * @return
 	 */
@@ -334,6 +348,7 @@ public class OAuthBase
 	}
 	
 	/**
+	 * request access token
 	 * 
 	 * @param verifier
 	 * @return
@@ -371,6 +386,7 @@ public class OAuthBase
 	}
 	
 	/**
+	 * get auth url for user
 	 * 
 	 * @return
 	 */
@@ -389,7 +405,8 @@ public class OAuthBase
 	}
 	
 	/**
-	 * override this function to retrieve some more values from service provider's response
+	 * override this function to retrieve some more values from service provider's post-authorization response
+	 * 
 	 * @param values
 	 */
 	protected void retrieveValuesAfterAuthorization(HashMap<String, String> values)
@@ -401,8 +418,9 @@ public class OAuthBase
 	}
 	
 	/**
+	 * authorize user with given verifier
 	 * 
-	 * @param verifier
+	 * @param verifier PIN retrieved from service provider
 	 * @return
 	 */
 	final public boolean authorizeWithOAuthVerifier(String verifier)
@@ -420,6 +438,7 @@ public class OAuthBase
 	}
 	
 	/**
+	 * generate current timestamp
 	 * 
 	 * @return
 	 */
@@ -429,6 +448,7 @@ public class OAuthBase
 	}
 	
 	/**
+	 * generate nonce value
 	 * 
 	 * @return
 	 */
@@ -439,6 +459,7 @@ public class OAuthBase
 	}
 	
 	/**
+	 * send synchronous GET request to the service provider with essential header values
 	 * 
 	 * @param url
 	 * @param params
@@ -473,8 +494,40 @@ public class OAuthBase
 		}
 		return null;
 	}
+
+	/**
+	 * send asynchronous GET request to the service provider with essential header values
+	 * 
+	 * @param resultHandler
+	 * @param url
+	 * @param params
+	 * @return
+	 */
+	final public String getAsync(Handler resultHandler, String url, HashMap<String, String> params)
+	{
+		if(!this.isAuthorized)
+			return null;
+
+		HashMap<String, String> requestTokenHash = new HashMap<String, String>();
+		requestTokenHash.put("oauth_consumer_key", this.consumerKey);
+		requestTokenHash.put("oauth_token", this.accessToken);
+		requestTokenHash.put("oauth_signature_method", "HMAC-SHA1");
+		requestTokenHash.put("oauth_timestamp", getTimestamp());
+		requestTokenHash.put("oauth_nonce", getNonce());
+		requestTokenHash.put("oauth_version", "1.0");
+		
+		//set signature
+		requestTokenHash.put("oauth_signature", generateAccessSignature(generateSignatureBaseString("GET", url, requestTokenHash, params)));
+		
+		//get with auth header
+		HashMap<String, String> requestHeader = new HashMap<String, String>();
+		requestHeader.put("Authorization", generateAuthHeader(requestTokenHash));
+		
+		return ApacheHttpUtility.getInstance().getAsync(resultHandler, url, requestHeader, params);
+	}
 	
 	/**
+	 * send synchronous POST request to the service provider with essential header values
 	 * 
 	 * @param url
 	 * @param params
@@ -537,8 +590,68 @@ public class OAuthBase
 		}
 		return null;
 	}
+
+	/**
+	 * send asynchronous POST request to the service provider with essential header values
+	 * 
+	 * @param resultHandler
+	 * @param url
+	 * @param params
+	 * @return
+	 */
+	final public String postAsync(Handler resultHandler, String url, HashMap<String, Object> params)
+	{
+		if(!this.isAuthorized)
+			return null;
+
+		//check file existence
+		boolean fileExists = false;
+		if(params != null)
+		{
+			for(String key: params.keySet())
+			{
+				if(params.get(key).getClass() == File.class)
+				{
+					fileExists = true;
+					break;
+				}
+			}
+		}
+
+		HashMap<String, String> requestTokenHash = new HashMap<String, String>();
+		requestTokenHash.put("oauth_consumer_key", this.consumerKey);
+		requestTokenHash.put("oauth_token", this.accessToken);
+		requestTokenHash.put("oauth_signature_method", "HMAC-SHA1");
+		requestTokenHash.put("oauth_timestamp", getTimestamp());
+		requestTokenHash.put("oauth_nonce", getNonce());
+		requestTokenHash.put("oauth_version", "1.0");
+		
+		//set signature
+		if(fileExists)
+		{
+			requestTokenHash.put("oauth_signature", generateAccessSignature(generateSignatureBaseString("POST", url, requestTokenHash, null)));
+		}
+		else
+		{
+			HashMap<String, String> paramHash = null;
+			if(params != null)
+			{
+				paramHash = new HashMap<String, String>();
+				for(String key: params.keySet())
+					paramHash.put(key, params.get(key).toString());
+			}
+			requestTokenHash.put("oauth_signature", generateAccessSignature(generateSignatureBaseString("POST", url, requestTokenHash, paramHash)));
+		}
+		
+		//post with auth header
+		HashMap<String, String> requestHeader = new HashMap<String, String>();
+		requestHeader.put("Authorization", generateAuthHeader(requestTokenHash));
+
+		return ApacheHttpUtility.getInstance().postAsync(resultHandler, url, requestHeader, params);
+	}
 	
 	/**
+	 * getter for access token
 	 * 
 	 * @return
 	 */
@@ -548,6 +661,7 @@ public class OAuthBase
 	}
 	
 	/**
+	 * getter for access token secret
 	 * 
 	 * @return
 	 */
@@ -558,7 +672,7 @@ public class OAuthBase
 
 	/**
 	 * 
-	 * @return
+	 * @return is authorized or not 
 	 */
 	final public boolean isAuthorized()
 	{

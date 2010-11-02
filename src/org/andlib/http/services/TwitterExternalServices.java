@@ -42,7 +42,7 @@ import android.os.Handler;
  * @author meinside@gmail.com
  * @since 10.01.14.
  * 
- * last update 10.10.28.
+ * last update 10.11.02.
  *
  */
 public class TwitterExternalServices extends TwitterServices
@@ -79,7 +79,7 @@ public class TwitterExternalServices extends TwitterServices
 	 * @param resultHandler
 	 * @param devKey
 	 * @param media
-	 * @return
+	 * @return id of AsyncHttpTask that is assigned to this POST job
 	 */
 	public String asyncUploadMediaToYfrog(Handler resultHandler, String devKey, File media)
 	{
@@ -113,7 +113,7 @@ public class TwitterExternalServices extends TwitterServices
 	 * @param devKey
 	 * @param message
 	 * @param media
-	 * @return
+	 * @return id of AsyncHttpTask that is assigned to this POST job
 	 */
 	public String asyncUploadMediaToTwitpic(Handler resultHandler, String devKey, String message, File media)
 	{
@@ -182,7 +182,7 @@ public class TwitterExternalServices extends TwitterServices
 	 * @param title
 	 * @param description
 	 * @param video
-	 * @return
+	 * @return id of AsyncHttpTask that is assigned to this POST job
 	 */
 	public String asyncUploadVideoToTwitvid(Handler resultHandler, String message, String title, String description, File video)
 	{
