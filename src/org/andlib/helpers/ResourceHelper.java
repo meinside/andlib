@@ -31,15 +31,19 @@ package org.andlib.helpers;
 
 import java.io.InputStream;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 
 /**
  * 
  * @author meinside@gmail.com
  * @since 10.02.25.
  * 
- * last update 10.04.13.
+ * last update 10.11.03.
  *
  */
 final public class ResourceHelper
@@ -131,6 +135,33 @@ final public class ResourceHelper
 		catch(Exception e)
 		{
 			Logger.e(e.toString());
+		}
+		return null;
+	}
+
+	/**
+	 * get filepath of given content uri
+	 * 
+	 * @param activity
+	 * @param contentUri   
+	 * @return null if fails
+	 */
+	public static String getFilepathOfUri(Activity activity, Uri contentUri)
+	{
+		Cursor cursor = activity.managedQuery(contentUri, new String[]{MediaStore.Images.Media.DATA}, null, null, null);
+		try
+		{
+			int index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			cursor.moveToFirst();
+			return cursor.getString(index);
+		}
+		catch(Exception e)
+		{
+			Logger.e(e.toString());
+		}
+		finally
+		{
+			cursor.close();
 		}
 		return null;
 	}
