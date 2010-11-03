@@ -159,10 +159,6 @@ final public class ResourceHelper
 		{
 			Logger.e(e.toString());
 		}
-		finally
-		{
-			cursor.close();
-		}
 		return null;
 	}
 }
