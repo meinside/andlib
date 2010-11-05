@@ -29,6 +29,7 @@
 
 package org.andlib.helpers;
 
+import android.hardware.Camera;
 import android.media.MediaRecorder;
 import android.media.MediaRecorder.OnErrorListener;
 import android.media.MediaRecorder.OnInfoListener;
@@ -40,7 +41,7 @@ import android.os.Handler;
  * @author meinside@gmail.com
  * @since 10.11.04.
  * 
- * last update 10.11.04.
+ * last update 10.11.05.
  *
  */
 public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListener
@@ -48,16 +49,20 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 	public static final int DEFAULT_SAMPLING_RATE = 44100;	//44.1khz
 	public static final int DEFAULT_ENCODING_BITRATE = 128 * 1024;	//128kbps
 	public static final int DEFAULT_NUM_CHANNELS = 2;	//stereo
+	public static final int DEFAULT_FRAME_RATE = 24;	//24 fps
 	public static final int DEFAULT_MAX_DURATION = 0;	//infinite
 	public static final int DEFAULT_MAX_FILESIZE = 0;	//infinite
 
+	protected Camera camera = null;
 	protected MediaRecorder recorder = null;
+	
+	protected String filepath = null;
 
-	private boolean isRecording = false;
-	private int recorderState = -1;
+	protected boolean isRecording = false;
+	protected int recorderState = -1;
 
-	private Handler handler = null;
-	private MediaRecorderListener listener = null;
+	protected Handler handler = null;
+	protected MediaRecorderListener listener = null;
 
 	/**
 	 * default constructor that does nothing
@@ -71,7 +76,7 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 	/**
 	 * initialize recorder object
 	 */
-	private void initRecorder()
+	protected void initRecorder()
 	{
 		if(recorder != null)
 		{
@@ -84,6 +89,8 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 		isRecording = false;
 
 		recorder = new MediaRecorder();
+		if(camera != null)
+			recorder.setCamera(camera);
 		recorder.setOnErrorListener(this);
 		recorder.setOnInfoListener(this);
 		
@@ -111,12 +118,20 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 
 	/**
 	 * start recording
+	 * 
+	 * @param filepath
+	 * @param camera null if none (should be unlocked before handing)
 	 */
-	synchronized public void startRecording()
+	synchronized public void startRecording(String filepath, Camera camera)
 	{
+		this.camera = camera;
+
 		initRecorder();
 		try
 		{
+			this.filepath = filepath;
+			recorder.setOutputFile(filepath);
+
 			recorder.prepare();
 			recorder.start();
 
@@ -137,6 +152,18 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 		}
 		catch(Exception e)
 		{
+			if(camera != null)
+			{
+				try
+				{
+					camera.reconnect();
+				}
+				catch(Exception ce)
+				{
+					Logger.e(ce.toString());
+				}
+			}
+
 			recorderState = MediaRecorder.MEDIA_RECORDER_ERROR_UNKNOWN;
 			if(listener != null && handler != null)
 			{
@@ -173,6 +200,18 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 			recorder = null;
 			
 			Logger.v("recorder released");
+		}
+
+		if(camera != null)
+		{
+			try
+			{
+				camera.reconnect();
+			}
+			catch(Exception e)
+			{
+				Logger.e(e.toString());
+			}
 		}
 
 		recorderState = MediaRecorder.MEDIA_RECORDER_INFO_UNKNOWN;
