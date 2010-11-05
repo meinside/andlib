@@ -55,7 +55,7 @@ import android.webkit.MimeTypeMap;
  * @author meinside@gmail.com
  * @since 09.10.05.
  * 
- * last update 10.10.28.
+ * last update 10.11.05.
  *
  */
 final public class HttpUtility
@@ -803,5 +803,28 @@ final public class HttpUtility
 
 			return this.cancel(true);
 		}
+	}
+
+
+	/**
+	 * get file's size at given url (using http header)
+	 * 
+	 * @param url
+	 * @return -1 when failed
+	 */
+	public static int getFileSizeAtURL(URL url)
+	{
+		int filesize = -1;
+		try
+		{
+	    	HttpURLConnection http = (HttpURLConnection)url.openConnection();
+	    	filesize = http.getContentLength();
+	    	http.disconnect();
+		}
+		catch(Exception e)
+		{
+			Logger.e(e.toString());
+		}
+    	return filesize;
 	}
 }
