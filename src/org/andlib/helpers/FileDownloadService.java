@@ -48,6 +48,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
+import android.widget.RemoteViews;
 
 /**
  * service class for downloading multiple files from web
@@ -127,7 +128,17 @@ public abstract class FileDownloadService extends Service
 	}
 
 	/**
-	 * implement this function to decide what intent to be called when user clicks download notification 
+	 * implement this function to decide what intent to be called when user clicks download notification
+	 * <br>
+	 * <br>
+	 * ex)
+	 * <br>
+	 * <pre>
+	 * 	protected Class<?> getIntentForLatestInfo()
+	 * 	{
+	 * 		return SomeActivity.class;
+	 * 	}
+	 * </pre>
 	 * 
 	 * @return
 	 */
@@ -135,6 +146,16 @@ public abstract class FileDownloadService extends Service
 	
 	/**
 	 * implement this function to customize notification flag
+	 * <br>
+	 * <br>
+	 * ex)
+	 * <br>
+	 * <pre>
+	 * 	protected int getNotificationFlag()
+	 * 	{
+	 * 		return Notification.FLAG_AUTO_CANCEL | Notification.DEFAULT_LIGHTS;
+	 * 	}
+	 * </pre>
 	 * 
 	 * @return
 	 */
@@ -142,6 +163,9 @@ public abstract class FileDownloadService extends Service
 
 	/**
 	 * implement this function to provide target files
+	 * <br>
+	 * <br>
+	 * (HashMap's key = remote file path, value = local file path)
 	 * 
 	 * @return
 	 */
@@ -156,6 +180,34 @@ public abstract class FileDownloadService extends Service
 	abstract protected void onFinishDownload(int successCount, HashMap<String, String> failedFiles);
 
 	/**
+	 * override this function to customize progress view on notification
+	 * <br>
+	 * <br>
+	 * ex)
+	 * <br>
+	 * <pre>
+	 * protected RemoteViews getProgressView(int currentNumFile, int totalNumFiles, int currentReceivedBytes, int totalNumBytes)
+	 * {
+	 * 	RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.progress);
+	 * 	contentView.setImageViewResource(R.id.image, R.drawable.icon);
+	 * 	contentView.setTextViewText(R.id.text, String.format("Progress (%d / %d)", currentNumFile, totalNumFiles));
+	 * 	contentView.setProgressBar(R.id.progress, 100, 100 * currentReceivedBytes / totalNumBytes, false);
+	 * 	return contentView;
+	 * }
+	 * </pre>
+	 * 
+	 * @param currentNumFile
+	 * @param totalNumFiles
+	 * @param currentReceivedBytes
+	 * @param totalNumBytes
+	 * @return
+	 */
+	protected RemoteViews getProgressView(int currentNumFile, int totalNumFiles, int currentReceivedBytes, int totalNumBytes)
+	{
+		return null;
+	}
+
+	/**
 	 * 
 	 * @param title
 	 * @param content
@@ -165,6 +217,21 @@ public abstract class FileDownloadService extends Service
 		Notification notification = new Notification(R.drawable.icon, ticker, System.currentTimeMillis());
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, getIntentForLatestInfo()), Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		notification.setLatestEventInfo(getApplicationContext(), title, content, contentIntent);
+		notification.flags = getNotificationFlag();
+		
+		notificationManager.notify(SERVICE_ID, notification);
+	}
+
+	/**
+	 * 
+	 * @param remoteView
+	 * @param ticker
+	 */
+	protected void showNotification(RemoteViews remoteView, String ticker)
+	{
+		Notification notification = new Notification(R.drawable.icon, ticker, System.currentTimeMillis());
+		notification.contentView = remoteView;
+		notification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, getIntentForLatestInfo()), Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		notification.flags = getNotificationFlag();
 		
 		notificationManager.notify(SERVICE_ID, notification);
@@ -235,10 +302,18 @@ public abstract class FileDownloadService extends Service
 							//don't show notification too often
 							if(loopCount++ % 20 == 0)
 							{
-								progress = String.format("Download Progress (%d / %d)", successCount +1, numTotalFiles);
-								kbytes = String.format("%s / %s", getStringByteSize(totalBytesRead), getStringByteSize(filesize));
+								RemoteViews progressView = getProgressView(successCount + 1, numTotalFiles, totalBytesRead, filesize);
+								if(progressView == null)
+								{
+									progress = String.format("Download Progress (%d / %d)", successCount + 1, numTotalFiles);
+									kbytes = String.format("%s / %s", getStringByteSize(totalBytesRead), getStringByteSize(filesize));
 
-								showNotification("Downloading File(s)", progress , kbytes);
+									showNotification("Downloading File(s)", progress , kbytes);
+								}
+								else
+								{
+									showNotification(progressView, "Downloading File(s)");
+								}
 							}
 						}
 						fos.close();
@@ -307,7 +382,7 @@ public abstract class FileDownloadService extends Service
 	 * @param size
 	 * @return
 	 */
-	private String getStringByteSize(int size)
+	protected String getStringByteSize(int size)
 	{
 		if(size > 1024 * 1024)	//mega
 		{
