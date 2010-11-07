@@ -62,7 +62,7 @@ import android.widget.RemoteViews;
  * @author meinside@gmail.com
  * @since 10.11.05.
  * 
- * last update 10.11.05.
+ * last update 10.11.07.
  *
  */
 public abstract class FileDownloadService extends Service
@@ -184,6 +184,28 @@ public abstract class FileDownloadService extends Service
 	 * <br>
 	 * <br>
 	 * ex)
+	 * <br>
+	 * <pre>
+	 * &lt;?xml version="1.0" encoding="utf-8"?&gt;
+	 * &lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	 * 	android:orientation="horizontal" android:layout_width="fill_parent"
+	 * 	android:layout_height="fill_parent" android:padding="3dp"&gt;
+	 * 	&lt;ImageView android:id="@+id/image" android:layout_width="30dip"
+	 * 		android:layout_height="30dip" android:layout_marginRight="10dp" /&gt;
+	 * 	&lt;LinearLayout android:orientation="vertical"
+	 * 		android:layout_width="fill_parent" android:layout_height="fill_parent"
+	 * 		android:padding="3dp"&gt;
+	 * 		&lt;ProgressBar android:id="@+id/progress"
+	 * 			android:layout_width="200dip" android:layout_height="20dip"
+	 * 			style="?android:attr/progressBarStyleHorizontal" android:max="100"
+	 * 			android:progress="0" /&gt;
+	 * 		&lt;TextView android:id="@+id/text" android:layout_width="wrap_content"
+	 * 			android:layout_height="20dip" android:textColor="#000" /&gt;
+	 * 	&lt;/LinearLayout&gt;
+	 * &lt;/LinearLayout&gt;
+	 * </pre>
+	 * and
+	 * <br>
 	 * <br>
 	 * <pre>
 	 * protected RemoteViews getProgressView(int currentNumFile, int totalNumFiles, int currentReceivedBytes, int totalNumBytes)
