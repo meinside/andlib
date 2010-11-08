@@ -46,7 +46,7 @@ import android.os.Handler;
  * @author meinside@gmail.com
  * @since 09.10.07.
  * 
- * last update 10.11.02.
+ * last update 10.11.08.
  *
  */
 public class OAuthBase
@@ -55,14 +55,14 @@ public class OAuthBase
 	public static final int OAUTH_DEFAULT_CONNECTION_TIMEOUT = 100000;
 	public static final int OAUTH_DEFAULT_SOCKET_TIMEOUT = 100000;
 	
-	protected String consumerKey = null;
+	private String consumerKey = null;
 	private String consumerSecret = null;
 	
 	private String requestTokenUrl = null;
 	private String accessTokenUrl = null;
 	private String authorizeUrl = null;
 	
-	protected String accessToken = null;
+	private String accessToken = null;
 	private String accessTokenSecret = null;
 	
 	private String oauthToken = null;
@@ -648,6 +648,16 @@ public class OAuthBase
 		requestHeader.put("Authorization", generateAuthHeader(requestTokenHash));
 
 		return ApacheHttpUtility.getInstance().postAsync(resultHandler, url, requestHeader, params);
+	}
+
+	/**
+	 * getter for consumer key
+	 * 
+	 * @return
+	 */
+	final public String getConsumerKey()
+	{
+		return this.consumerKey;
 	}
 	
 	/**

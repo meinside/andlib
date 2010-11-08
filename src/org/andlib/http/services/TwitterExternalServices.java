@@ -42,7 +42,7 @@ import android.os.Handler;
  * @author meinside@gmail.com
  * @since 10.01.14.
  * 
- * last update 10.11.02.
+ * last update 10.11.08.
  *
  */
 public class TwitterExternalServices extends TwitterServices
@@ -211,8 +211,8 @@ public class TwitterExternalServices extends TwitterServices
 	private String generateTwitterOAuthEchoCredentials()
 	{
 		HashMap<String, String> requestTokenHash = new HashMap<String, String>();
-		requestTokenHash.put("oauth_consumer_key", consumerKey);
-		requestTokenHash.put("oauth_token", accessToken);
+		requestTokenHash.put("oauth_consumer_key", getConsumerKey());
+		requestTokenHash.put("oauth_token", getAccessToken());
 		requestTokenHash.put("oauth_signature_method", "HMAC-SHA1");
 		requestTokenHash.put("oauth_timestamp", getTimestamp());
 		requestTokenHash.put("oauth_nonce", getNonce());
