@@ -34,7 +34,6 @@ import org.andlib.http.OAuthBase;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.KeyEvent;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -86,6 +85,7 @@ public abstract class OAuthAuthView extends WebView
 	{
 		getSettings().setJavaScriptEnabled(true);
 		setWebViewClient(new OAuthWebViewClient());
+		clearCache(true);
 
 		OAuthBase oauth = getOAuthBaseForLoadingAuthPage();
 		if(oauth != null)
@@ -98,17 +98,6 @@ public abstract class OAuthAuthView extends WebView
 		}
 		else
 			Logger.e("OAuthBase object is null");
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
-	{
-		if(keyCode == KeyEvent.KEYCODE_BACK && canGoBack())
-		{
-			goBack();
-			return true;
-		}
-		return false;
 	}
 
 	/**
