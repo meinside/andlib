@@ -55,7 +55,7 @@ import android.webkit.MimeTypeMap;
  * @author meinside@gmail.com
  * @since 09.10.05.
  * 
- * last update 10.11.05.
+ * last update 10.11.09.
  *
  */
 final public class HttpUtility
@@ -524,14 +524,14 @@ final public class HttpUtility
 		task.execute(ASYNC_METHOD_POSTBYTES, resultHandler, url, headerValues, bytes, contentType);
 		return task.getId();
 	}
-	
+
 	/**
 	 * Read up bytes from given InputStream instance and return
 	 * 
 	 * @param is (given InputStream instance is not closed by this function)
 	 * @return
 	 */
-	private byte[] readBytesFromInputStream(InputStream is)
+	public static byte[] readBytesFromInputStream(InputStream is)
 	{
 		try
 		{

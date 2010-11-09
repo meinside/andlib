@@ -39,7 +39,6 @@ import java.util.Map.Entry;
 
 import org.andlib.http.HttpUtility;
 
-import test.app.R;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -62,7 +61,7 @@ import android.widget.RemoteViews;
  * @author meinside@gmail.com
  * @since 10.11.05.
  * 
- * last update 10.11.07.
+ * last update 10.11.09.
  *
  */
 public abstract class FileDownloadService extends Service
@@ -180,6 +179,12 @@ public abstract class FileDownloadService extends Service
 	abstract protected void onFinishDownload(int successCount, HashMap<String, String> failedFiles);
 
 	/**
+	 * 
+	 * @return
+	 */
+	abstract protected int getNotificationIcon();
+
+	/**
 	 * override this function to customize progress view on notification
 	 * <br>
 	 * <br>
@@ -236,7 +241,7 @@ public abstract class FileDownloadService extends Service
 	 */
 	protected void showNotification(String ticker, String title, String content)
 	{
-		Notification notification = new Notification(R.drawable.icon, ticker, System.currentTimeMillis());
+		Notification notification = new Notification(getNotificationIcon(), ticker, System.currentTimeMillis());
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, getIntentForLatestInfo()), Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		notification.setLatestEventInfo(getApplicationContext(), title, content, contentIntent);
 		notification.flags = getNotificationFlag();
@@ -251,7 +256,7 @@ public abstract class FileDownloadService extends Service
 	 */
 	protected void showNotification(RemoteViews remoteView, String ticker)
 	{
-		Notification notification = new Notification(R.drawable.icon, ticker, System.currentTimeMillis());
+		Notification notification = new Notification(getNotificationIcon(), ticker, System.currentTimeMillis());
 		notification.contentView = remoteView;
 		notification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, getIntentForLatestInfo()), Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		notification.flags = getNotificationFlag();
