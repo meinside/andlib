@@ -46,7 +46,7 @@ import android.os.Handler;
  * @author meinside@gmail.com
  * @since 09.10.07.
  * 
- * last update 10.11.08.
+ * last update 10.11.10.
  *
  */
 public class OAuthBase
@@ -501,7 +501,7 @@ public class OAuthBase
 	 * @param resultHandler
 	 * @param url
 	 * @param params
-	 * @return
+	 * @return id string of async task object (can be used with cancelAsyncTask() to cancel task)
 	 */
 	final public String getAsync(Handler resultHandler, String url, HashMap<String, String> params)
 	{
@@ -597,7 +597,7 @@ public class OAuthBase
 	 * @param resultHandler
 	 * @param url
 	 * @param params
-	 * @return
+	 * @return id string of async task object (can be used with cancelAsyncTask() to cancel task)
 	 */
 	final public String postAsync(Handler resultHandler, String url, HashMap<String, Object> params)
 	{
@@ -687,5 +687,15 @@ public class OAuthBase
 	final public boolean isAuthorized()
 	{
 		return this.isAuthorized;
+	}
+
+	/**
+	 * cancel async task with given task id
+	 * 
+	 * @param taskId
+	 */
+	final public void cancelAsyncTask(String taskId)
+	{
+		ApacheHttpUtility.getInstance().cancelAsyncHttpTask(taskId);
 	}
 }
