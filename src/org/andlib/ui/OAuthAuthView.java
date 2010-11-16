@@ -34,6 +34,7 @@ import org.andlib.http.OAuthBase;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -43,7 +44,7 @@ import android.webkit.WebViewClient;
  * @author meinside@gmail.com
  * @since 10.11.07.
  * 
- * last update 10.11.08.
+ * last update 10.11.16.
  *
  */
 public abstract class OAuthAuthView extends WebView
@@ -56,7 +57,7 @@ public abstract class OAuthAuthView extends WebView
 	public OAuthAuthView(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
-		loadAuthPage();
+		loadAuthPage(context);
 	}
 
 	/**
@@ -66,7 +67,7 @@ public abstract class OAuthAuthView extends WebView
 	public OAuthAuthView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		loadAuthPage();
+		loadAuthPage(context);
 	}
 
 	/**
@@ -75,17 +76,24 @@ public abstract class OAuthAuthView extends WebView
 	public OAuthAuthView(Context context)
 	{
 		super(context);
-		loadAuthPage();
+		loadAuthPage(context);
 	}
 
 	/**
 	 * 
+	 * @param context
 	 */
-	private void loadAuthPage()
+	private void loadAuthPage(Context context)
 	{
-		getSettings().setJavaScriptEnabled(true);
-		setWebViewClient(new OAuthWebViewClient());
+		//do not use cache
+		getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 		clearCache(true);
+
+		//enable javascript
+		getSettings().setJavaScriptEnabled(true);
+
+		//set webview client
+		setWebViewClient(new OAuthWebViewClient());
 
 		OAuthBase oauth = getOAuthBaseForLoadingAuthPage();
 		if(oauth != null)

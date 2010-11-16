@@ -208,9 +208,9 @@ public class SimpleCalendarView extends TableLayout
 	}
 
 	/**
-	 * 
+	 * refresh view
 	 */
-	private void refresh()
+	public void refresh()
 	{
 		helper = null;
 		helper = new MonthDisplayHelper(currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), Calendar.SUNDAY);
@@ -347,6 +347,17 @@ public class SimpleCalendarView extends TableLayout
 	{
 		currentDate.add(Calendar.DAY_OF_MONTH, 1);
 		
+		refresh();
+	}
+
+	/**
+	 * 
+	 */
+	public void goToToday()
+	{
+		Calendar today = Calendar.getInstance();
+		currentDate.set(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
+
 		refresh();
 	}
 
