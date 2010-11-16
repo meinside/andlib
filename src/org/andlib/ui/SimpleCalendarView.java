@@ -60,7 +60,7 @@ public class SimpleCalendarView extends TableLayout
 	public static final int NUM_ROWS = 6;
 	public static final int NUM_COLUMNS = 7;
 	
-	private Context context;
+	protected Context context;
 
 	private Calendar currentDate = null;
 	private CalendarOnClickListener listener = null;
