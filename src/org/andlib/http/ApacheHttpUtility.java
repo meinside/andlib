@@ -70,7 +70,7 @@ import android.webkit.MimeTypeMap;
  * @author meinside@gmail.com
  * @since 10.01.13.
  * 
- * last update 10.10.31.
+ * last update 10.11.16.
  * 
  * <p>
  * this class needs: apache-mime4j-0.6.jar & httpmime-4.0.1.jar<br>
@@ -337,7 +337,7 @@ final public class ApacheHttpUtility
 					try
 					{
 						UrlEncodedFormEntity urlEncodedFormEntity;
-						urlEncodedFormEntity = new UrlEncodedFormEntity(params);
+						urlEncodedFormEntity = new UrlEncodedFormEntity(params, "utf-8");
 						post.setEntity(urlEncodedFormEntity);
 					}
 					catch(UnsupportedEncodingException e)
