@@ -32,7 +32,6 @@ package org.andlib.ui;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -100,15 +99,9 @@ public class ImageButton extends Button
 	public void setEnabled(boolean enabled)
 	{
 		if(!enabled)
-		{
-			Drawable disabled = original.mutate();
-			disabled.setColorFilter(getDisabledColor(), PorterDuff.Mode.MULTIPLY);
-			setBackgroundDrawable(disabled);
-		}
+			changeToDisabledState();
 		else
-		{
-			setBackgroundDrawable(original);
-		}
+			changeToNormalState();
 
 		super.setEnabled(enabled);
 	}
