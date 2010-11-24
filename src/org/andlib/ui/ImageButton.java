@@ -30,8 +30,10 @@
 package org.andlib.ui;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,7 +59,7 @@ import android.widget.Button;
  * @author meinside@gmail.com
  * @since 10.11.22.
  * 
- * last update 10.11.23.
+ * last update 10.11.24.
  *
  */
 public class ImageButton extends Button
@@ -106,6 +108,31 @@ public class ImageButton extends Button
 		super.setEnabled(enabled);
 	}
 
+	@Override
+	public void setBackgroundDrawable(Drawable d)
+	{
+		//copy original drawable
+		original = new BitmapDrawable(getResources(), ((BitmapDrawable)d).getBitmap());
+
+		if(isEnabled())
+			changeToNormalState();
+		else
+			changeToDisabledState();
+	}
+
+	@Override
+	public void setBackgroundResource(int resid)
+	{
+		//copy original drawable
+		Resources res = getResources();
+		original = new BitmapDrawable(res, ((BitmapDrawable)res.getDrawable(resid)).getBitmap());
+
+		if(isEnabled())
+			changeToNormalState();
+		else
+			changeToDisabledState();
+	}
+
 	/**
 	 * 
 	 * @return
@@ -142,7 +169,7 @@ public class ImageButton extends Button
 	{
 		BitmapDrawable normal = (BitmapDrawable)original.mutate();
 		normal.setColorFilter(getNormalColor(), PorterDuff.Mode.MULTIPLY);
-		setBackgroundDrawable(normal);
+		super.setBackgroundDrawable(normal);
 	}
 
 	/**
@@ -152,7 +179,7 @@ public class ImageButton extends Button
 	{
 		BitmapDrawable pressed = (BitmapDrawable)original.mutate();
 		pressed.setColorFilter(getPressedColor(), PorterDuff.Mode.MULTIPLY);
-		setBackgroundDrawable(pressed);
+		super.setBackgroundDrawable(pressed);
 	}
 
 	/**
@@ -162,7 +189,7 @@ public class ImageButton extends Button
 	{
 		BitmapDrawable disabled = (BitmapDrawable)original.mutate();
 		disabled.setColorFilter(getDisabledColor(), PorterDuff.Mode.MULTIPLY);
-		setBackgroundDrawable(disabled);
+		super.setBackgroundDrawable(disabled);
 	}
 
 	/**
