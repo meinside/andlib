@@ -45,7 +45,7 @@ import android.os.Handler;
  * @author meinside@gmail.com
  * @since 10.10.28.
  * 
- * last update 10.10.31.
+ * last update 10.11.24.
  *
  */
 public class MultipleSoundPlayer<F> extends SoundPlayer
@@ -175,6 +175,7 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 
 			while(files.size() > 0)
 			{
+				//current sound's play will start
 				synchronized(currentAsyncTaskHash)
 				{
 					if(currentAsyncTaskHash == this.hashCode())
@@ -219,7 +220,8 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 					else
 					{
 						Logger.e("not a proper type: " + currentArgClass.getName());
-
+						
+						//current sound's play failed
 						if(currentAsyncTaskHash == this.hashCode())
 						{
 							if(listener != null && handler != null)
@@ -233,6 +235,7 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 					}
 				}
 
+				//current sound's play finished
 				synchronized(currentAsyncTaskHash)
 				{
 					if(currentAsyncTaskHash == this.hashCode())
@@ -263,6 +266,22 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 					}
 				}
 			}
+
+			//all sound plays were finished
+			synchronized(currentAsyncTaskHash)
+			{
+				if(currentAsyncTaskHash == this.hashCode())
+				{
+					if(listener != null && handler != null)
+						handler.post(new Runnable(){
+							@Override
+							public void run()
+							{
+								listener.allSoundPlaysFinished();
+							}});
+				}
+			}
+
 			return null;
 		}
 
@@ -299,6 +318,11 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 		 * @param file
 		 */
 		public void soundPlayFinished(F file);
+
+		/**
+		 * 
+		 */
+		public void allSoundPlaysFinished();
 
 		/**
 		 * 
