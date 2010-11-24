@@ -50,14 +50,7 @@ import android.os.Handler;
  */
 public class MultipleSoundPlayer<F> extends SoundPlayer
 {
-	public static final String ASYNC_CURRENT_PLAYING_SOUND = "sound.multiple.current";
-
-	public static final int ASYNC_STATUS_WILL_BEGIN = 1;
-	public static final int ASYNC_STATUS_FINISHED = 2;
-	public static final int ASYNC_STATUS_ERROR = -1; 
-	
 	private Context context;
-
 	private MultipleSoundPlayerListener<F> listener;
 
 	private long gapTimeMillis;
