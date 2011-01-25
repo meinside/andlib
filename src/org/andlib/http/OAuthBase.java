@@ -42,11 +42,15 @@ import android.os.Handler;
 
 /**
  * OAuth base class
+ * <br>
+ * <br>
+ * currently using Apache Http library due to <a href="http://code.google.com/p/android/issues/detail?id=6684">this issue</a>
+ * <br>
+ * <br>
+ * last update: 2010.11.10.
  * 
  * @author meinside@gmail.com
- * @since 09.10.07.
- * 
- * last update 10.11.10.
+ * @since 2009.10.07.
  *
  */
 public class OAuthBase

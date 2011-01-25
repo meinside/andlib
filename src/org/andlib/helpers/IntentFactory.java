@@ -31,14 +31,16 @@ package org.andlib.helpers;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.MediaStore;
 
 /**
  * factory class for generating various intents
+ * <br>
+ * <br>
+ * last update: 2011.01.24.
  * 
  * @author meinside@gmail.com
- * @since 10.11.03.
- * 
- * last update 10.11.03.
+ * @since 2010.11.03.
  *
  */
 public class IntentFactory
@@ -56,8 +58,10 @@ public class IntentFactory
 
 	/**
 	 * generates an intent for selecting media
-	 * 
-	 * (when type == VIDEO, picker doesn't work.
+	 * <br>
+	 * <br>
+	 * (when type == <b>MediaType.VIDEO</b>, picker doesn't work.
+	 * <br>
 	 *  instead, it looks for a video player to play selected one.)
 	 *  
 	 * @param title
@@ -97,8 +101,9 @@ public class IntentFactory
 
 	/**
 	 * generates an intent for selecting media
-	 * 
-	 * (when type == AUDIO, picker doesn't work.
+	 * <br>
+	 * <br>
+	 * (when type == <b>MediaType.AUDIO</b>, picker doesn't work.
 	 *  instead, it looks for an audio player to play selected one.)
 	 * 
 	 * @param title
@@ -116,5 +121,28 @@ public class IntentFactory
 			intent.setType("video/*");
 		
 		return Intent.createChooser(intent, title);
+	}
+
+	/**
+	 * generates an intent for taking photos/videos that saves result to given uri
+	 * 
+	 * @param type either one of <b>MediaType.IMAGE</b> or <b>MediaType.VIDEO</b>
+	 * @param outputUri
+	 * @return null if error
+	 */
+	public static Intent getCameraIntent(MediaType type, Uri outputUri)
+	{
+		Intent intent = null;
+		if(type == MediaType.IMAGE)
+		{
+			intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
+		}
+		else if(type == MediaType.VIDEO)
+		{
+			intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
+		}
+		return intent;
 	}
 }
