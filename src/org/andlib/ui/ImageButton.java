@@ -59,7 +59,7 @@ import android.widget.Button;
  * @author meinside@gmail.com
  * @since 10.11.22.
  * 
- * last update 10.11.24.
+ * last update 11.02.08.
  *
  */
 public class ImageButton extends Button
@@ -75,7 +75,7 @@ public class ImageButton extends Button
 	public ImageButton(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
-		init();
+		initialize();
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class ImageButton extends Button
 	public ImageButton(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		init();
+		initialize();
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class ImageButton extends Button
 	public ImageButton(Context context)
 	{
 		super(context);
-		init();
+		initialize();
 	}
 
 	@Override
@@ -195,8 +195,11 @@ public class ImageButton extends Button
 	/**
 	 * initialize this button
 	 */
-	private void init()
+	private void initialize()
 	{
+		if(isInEditMode())
+			return;
+
 		//copy original drawable
 		original = new BitmapDrawable(getResources(), ((BitmapDrawable)getBackground()).getBitmap());
 		

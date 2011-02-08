@@ -46,7 +46,7 @@ import android.view.SurfaceView;
  * @author meinside@gmail.com
  * @since 10.03.17.
  * 
- * last update 10.11.05.
+ * last update 11.02.08.
  *
  */
 public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Camera.PictureCallback, Camera.ShutterCallback
@@ -93,6 +93,9 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 	 */
 	private void initialize(Context context)
 	{
+		if(isInEditMode())
+			return;
+
 		Logger.v("initialize");
 		
 		holder = getHolder();

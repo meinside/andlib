@@ -61,7 +61,7 @@ import android.widget.RemoteViews;
  * @author meinside@gmail.com
  * @since 10.11.05.
  * 
- * last update 10.11.09.
+ * last update 11.02.08.
  *
  */
 public abstract class FileDownloadService extends Service
@@ -265,6 +265,24 @@ public abstract class FileDownloadService extends Service
 	}
 
 	/**
+	 * override this function to alter socket connect timeout value
+	 * @return
+	 */
+	protected int getConnectTimeout()
+	{
+		return 1000;
+	}
+
+	/**
+	 * override this function to alter socket read timeout value
+	 * @return
+	 */
+	protected int getReadTimeout()
+	{
+		return 1000;
+	}
+
+	/**
 	 * 
 	 * AsyncTask for downloading multiple files
 	 * 
@@ -316,6 +334,9 @@ public abstract class FileDownloadService extends Service
 					if(filesize > 0)
 					{
 						URLConnection connection = url.openConnection();
+						connection.setConnectTimeout(getConnectTimeout());
+						connection.setReadTimeout(getReadTimeout());
+
 						BufferedInputStream bis = new BufferedInputStream(connection.getInputStream());
 						FileOutputStream fos = new FileOutputStream(new File(localFilepath));
 						int bytesRead, totalBytesRead = 0;

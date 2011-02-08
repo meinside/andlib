@@ -49,7 +49,7 @@ import android.view.SurfaceView;
  * @author meinside@gmail.com
  * @since 10.11.04.
  * 
- * last update 10.11.05.
+ * last update 11.02.08.
  *
  */
 public class CamcorderSurfaceView extends SurfaceView implements SurfaceHolder.Callback
@@ -97,6 +97,9 @@ public class CamcorderSurfaceView extends SurfaceView implements SurfaceHolder.C
 	 */
 	private void initialize(Context context)
 	{
+		if(isInEditMode())
+			return;
+
 		Logger.v("initialize");
 		
 		holder = getHolder();

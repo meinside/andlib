@@ -52,7 +52,7 @@ import android.widget.TextView;
  * @author meinside@gmail.com
  * @since 10.11.15.
  * 
- * last update 10.11.16.
+ * last update 11.02.08.
  *
  */
 public class SimpleCalendarView extends TableLayout
@@ -94,6 +94,9 @@ public class SimpleCalendarView extends TableLayout
 	 */
 	private void initialize(Context context)
 	{
+		if(isInEditMode())
+			return;
+
 		this.context = context;
 		currentDate = Calendar.getInstance();
 

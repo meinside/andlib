@@ -44,7 +44,7 @@ import android.webkit.WebViewClient;
  * @author meinside@gmail.com
  * @since 10.11.07.
  * 
- * last update 10.11.16.
+ * last update 11.02.08.
  *
  */
 public abstract class OAuthAuthView extends WebView
@@ -85,6 +85,9 @@ public abstract class OAuthAuthView extends WebView
 	 */
 	private void loadAuthPage(Context context)
 	{
+		if(isInEditMode())
+			return;
+
 		//do not use cache
 		getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 		clearCache(true);
