@@ -29,7 +29,9 @@
 
 package org.andlib.http;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -38,9 +40,11 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.util.ByteArrayBuffer;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.webkit.MimeTypeMap;
 
 /**
  * Simple HTTP response class for ApacheHttpUtility
@@ -48,11 +52,15 @@ import android.os.Parcelable;
  * @author meinside@gmail.com
  * @since 09.10.25.
  * 
- * last update 10.10.27.
+ * last update 11.03.10.
  *
  */
 public class SimpleHttpResponse implements Parcelable
 {
+	public static final int BYTES_BUFFER_INITIAL_SIZE = 32 * 1024;	//32KB
+	public static final int FILE_BUFFER_SIZE = 8 * 1024;	//8KB
+	public static final int READ_BUFFER_SIZE = 8 * 1024;	//8KB
+
 	private int httpStatusCode = -1;
 	private byte[] httpResponseBody = null;
 	private Header[] httpResponseHeaders = null;
@@ -75,7 +83,7 @@ public class SimpleHttpResponse implements Parcelable
 			{
 				try
 				{
-					httpResponseBody = ApacheHttpUtility.readBytesFromInputStream(entity.getContent());
+					httpResponseBody = readBytesFromInputStream(entity.getContent());
 				}
 				catch(IllegalStateException e)
 				{
@@ -309,5 +317,68 @@ public class SimpleHttpResponse implements Parcelable
 		//content type and encoding
 		contentType = in.readString();
 		contentEncoding = in.readString();
+	}
+
+	/**
+	 * Read up bytes from given InputStream instance and return
+	 * 
+	 * @param is (given InputStream instance is not closed by this function)
+	 * @return
+	 */
+	public static byte[] readBytesFromInputStream(InputStream is)
+	{
+		try
+		{
+			ByteArrayBuffer buffer = new ByteArrayBuffer(BYTES_BUFFER_INITIAL_SIZE);
+			byte[] bytes = new byte[READ_BUFFER_SIZE];
+			int bytesRead, startPos, length;
+			boolean firstRead = true;
+			while((bytesRead = is.read(bytes, 0, READ_BUFFER_SIZE)) > 0)
+			{
+				startPos = 0;
+				length = bytesRead;
+				if(firstRead)
+				{
+					//remove first occurrence of '0xEF 0xBB 0xBF' (UTF-8 BOM)
+					if(bytesRead >= 3 && (bytes[0] & 0xFF) == 0xEF && (bytes[1] & 0xFF) == 0xBB && (bytes[2] & 0xFF) == 0xBF)
+					{
+						startPos += 3;
+						length -= 3;
+					}
+					firstRead = false;
+				}
+				buffer.append(bytes, startPos, length);
+			}
+			return buffer.toByteArray();
+		}
+		catch(Exception e)
+		{
+			Logger.e(e.toString());
+		}
+
+		return null;
+	}
+
+	/**
+	 * return mime type of given file
+	 * 
+	 * @param file
+	 * @return when mime type is unknown, it simply returns "application/octet-stream"
+	 */
+	public static String getMimeType(File file)
+	{
+		String mimeType = null;
+		try
+		{
+			mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(file.getCanonicalPath()));
+		}
+		catch(IOException e)
+		{
+			Logger.e(e.toString());
+		}
+		if(mimeType == null)
+			mimeType = "application/octet-stream";
+
+		return mimeType;
 	}
 }

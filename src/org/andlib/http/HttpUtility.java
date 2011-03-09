@@ -42,28 +42,22 @@ import java.util.Map;
 
 import org.andlib.helpers.Logger;
 import org.andlib.helpers.StringCodec;
-import org.apache.http.util.ByteArrayBuffer;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.webkit.MimeTypeMap;
 
 /**
  * 
  * @author meinside@gmail.com
  * @since 09.10.05.
  * 
- * last update 10.11.09.
+ * last update 11.03.10.
  *
  */
 final public class HttpUtility
 {
-	public static final int BYTES_BUFFER_INITIAL_SIZE = 32 * 1024;	//32KB
-	public static final int FILE_BUFFER_SIZE = 8 * 1024;	//8KB
-	public static final int READ_BUFFER_SIZE = 8 * 1024;	//8KB
-
 	private static HttpUtility httpUtility = null;
 	private static HashMap<String, AsyncHttpTask> asyncTaskPool = null;
 
@@ -215,7 +209,7 @@ final public class HttpUtility
 		try
 		{
 			InputStream is = connection.getInputStream();
-			byte[] responseBody = readBytesFromInputStream(is);
+			byte[] responseBody = SimpleHttpResponse.readBytesFromInputStream(is);
 			is.close();
 			return new SimpleHttpResponse(connection.getResponseCode(), responseBody, connection.getHeaderFields());
 		}
@@ -310,13 +304,13 @@ final public class HttpUtility
 						{
 							File file = (File)value;
 							dos.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + file.getName() + "\"\r\n");
-							dos.writeBytes("Content-Type: " + getMimeType(file) + "\r\n\r\n");
+							dos.writeBytes("Content-Type: " + SimpleHttpResponse.getMimeType(file) + "\r\n\r\n");
 							
 							FileInputStream fis = new FileInputStream((File)value);
-							byte[] buffer = new byte[FILE_BUFFER_SIZE];
+							byte[] buffer = new byte[SimpleHttpResponse.FILE_BUFFER_SIZE];
 							
 							int bytesRead = 0;
-							while((bytesRead = fis.read(buffer, 0, FILE_BUFFER_SIZE)) > 0)
+							while((bytesRead = fis.read(buffer, 0, SimpleHttpResponse.FILE_BUFFER_SIZE)) > 0)
 							{
 								dos.write(buffer, 0, bytesRead);
 							}
@@ -368,7 +362,7 @@ final public class HttpUtility
 		try
 		{
 			InputStream is = connection.getInputStream();
-			byte[] responseBody = readBytesFromInputStream(is);
+			byte[] responseBody = SimpleHttpResponse.readBytesFromInputStream(is);
 			is.close();
 			return new SimpleHttpResponse(connection.getResponseCode(), responseBody, connection.getHeaderFields());
 		}
@@ -453,7 +447,7 @@ final public class HttpUtility
 		try
 		{
 			InputStream is = connection.getInputStream();
-			byte[] responseBody = readBytesFromInputStream(is);
+			byte[] responseBody = SimpleHttpResponse.readBytesFromInputStream(is);
 			is.close();
 			return new SimpleHttpResponse(connection.getResponseCode(), responseBody, connection.getHeaderFields());
 		}
@@ -524,110 +518,6 @@ final public class HttpUtility
 		task.execute(ASYNC_METHOD_POSTBYTES, resultHandler, url, headerValues, bytes, contentType);
 		return task.getId();
 	}
-
-	/**
-	 * Read up bytes from given InputStream instance and return
-	 * 
-	 * @param is (given InputStream instance is not closed by this function)
-	 * @return
-	 */
-	public static byte[] readBytesFromInputStream(InputStream is)
-	{
-		try
-		{
-			ByteArrayBuffer buffer = new ByteArrayBuffer(BYTES_BUFFER_INITIAL_SIZE);
-			byte[] bytes = new byte[READ_BUFFER_SIZE];
-			int bytesRead, startPos, length;
-			boolean firstRead = true;
-			while((bytesRead = is.read(bytes, 0, READ_BUFFER_SIZE)) > 0)
-			{
-				startPos = 0;
-				length = bytesRead;
-				if(firstRead)
-				{
-					//remove first occurrence of '0xEF 0xBB 0xBF' (UTF-8 BOM)
-					if(bytesRead >= 3 && (bytes[0] & 0xFF) == 0xEF && (bytes[1] & 0xFF) == 0xBB && (bytes[2] & 0xFF) == 0xBF)
-					{
-						startPos += 3;
-						length -= 3;
-					}
-					firstRead = false;
-				}
-				buffer.append(bytes, startPos, length);
-			}
-			return buffer.toByteArray();
-		}
-		catch(Exception e)
-		{
-			Logger.e(e.toString());
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * Read up bytes from given InputStream instance and return them as a String
-	 * 
-	 * @param is (given InputStream instance is not closed by this function)
-	 * @return
-	 */
-	@SuppressWarnings("unused")
-	private String readStringFromInputStream(InputStream is)
-	{
-		try
-		{
-			StringBuffer buffer = new StringBuffer();
-			byte[] bytes = new byte[READ_BUFFER_SIZE];
-			int bytesRead, startPos, length;
-			boolean firstRead = true;
-			while((bytesRead = is.read(bytes, 0, READ_BUFFER_SIZE)) > 0)
-			{
-				startPos = 0;
-				length = bytesRead;
-				if(firstRead)
-				{
-					//remove first occurrence of '0xEF 0xBB 0xBF' (UTF-8 BOM)
-					if(bytesRead >= 3 && (bytes[0] & 0xFF) == 0xEF && (bytes[1] & 0xFF) == 0xBB && (bytes[2] & 0xFF) == 0xBF)
-					{
-						startPos += 3;
-						length -= 3;
-					}
-					firstRead = false;
-				}
-				buffer.append(new String(bytes, startPos, length));
-			}
-			return buffer.toString();
-		}
-		catch(Exception e)
-		{
-			Logger.e(e.toString());
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * return mime type of given file
-	 * 
-	 * @param file
-	 * @return when mime type is unknown, it simply returns "application/octet-stream"
-	 */
-	public static String getMimeType(File file)
-	{
-		String mimeType = null;
-		try
-		{
-			mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(file.getCanonicalPath()));
-		}
-		catch(IOException e)
-		{
-			Logger.e(e.toString());
-		}
-		if(mimeType == null)
-			mimeType = "application/octet-stream";
-		
-		return mimeType;
-	}
 	
 	/**
 	 * 
@@ -665,7 +555,7 @@ final public class HttpUtility
 	/**
 	 * 
 	 */
-	public void cancelAllAsynccHttpTasks()
+	public void cancelAllAsyncHttpTasks()
 	{
 		Logger.v("canceling all async http tasks");
 

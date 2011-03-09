@@ -31,7 +31,6 @@ package org.andlib.http;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,13 +55,11 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.util.ByteArrayBuffer;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.webkit.MimeTypeMap;
 
 
 /**
@@ -70,7 +67,7 @@ import android.webkit.MimeTypeMap;
  * @author meinside@gmail.com
  * @since 10.01.13.
  * 
- * last update 10.11.16.
+ * last update 11.03.10.
  * 
  * <p>
  * this class needs: apache-mime4j-0.6.jar & httpmime-4.0.1.jar<br>
@@ -116,10 +113,6 @@ import android.webkit.MimeTypeMap;
  */
 final public class ApacheHttpUtility
 {
-	public static final int BYTES_BUFFER_INITIAL_SIZE = 32 * 1024;	//32KB
-	public static final int FILE_BUFFER_SIZE = 8 * 1024;	//8KB
-	public static final int READ_BUFFER_SIZE = 8 * 1024;	//8KB
-
 	private static ApacheHttpUtility httpUtility = null;
 	private static HashMap<String, AsyncHttpTask> asyncTaskPool = null;
 
@@ -313,7 +306,7 @@ final public class ApacheHttpUtility
 						if(value.getClass() == File.class)
 						{
 							File file = (File)value;
-							multipartEntity.addPart(key, new FileBody(file, getMimeType(file)));
+							multipartEntity.addPart(key, new FileBody(file, SimpleHttpResponse.getMimeType(file)));
 						}
 						else
 						{
@@ -461,69 +454,6 @@ final public class ApacheHttpUtility
 	}
 
 	/**
-	 * Read up bytes from given InputStream instance and return
-	 * 
-	 * @param is (given InputStream instance is not closed by this function)
-	 * @return
-	 */
-	public static byte[] readBytesFromInputStream(InputStream is)
-	{
-		try
-		{
-			ByteArrayBuffer buffer = new ByteArrayBuffer(BYTES_BUFFER_INITIAL_SIZE);
-			byte[] bytes = new byte[READ_BUFFER_SIZE];
-			int bytesRead, startPos, length;
-			boolean firstRead = true;
-			while((bytesRead = is.read(bytes, 0, READ_BUFFER_SIZE)) > 0)
-			{
-				startPos = 0;
-				length = bytesRead;
-				if(firstRead)
-				{
-					//remove first occurrence of '0xEF 0xBB 0xBF' (UTF-8 BOM)
-					if(bytesRead >= 3 && (bytes[0] & 0xFF) == 0xEF && (bytes[1] & 0xFF) == 0xBB && (bytes[2] & 0xFF) == 0xBF)
-					{
-						startPos += 3;
-						length -= 3;
-					}
-					firstRead = false;
-				}
-				buffer.append(bytes, startPos, length);
-			}
-			return buffer.toByteArray();
-		}
-		catch(Exception e)
-		{
-			Logger.e(e.toString());
-		}
-
-		return null;
-	}
-
-	/**
-	 * return mime type of given file
-	 * 
-	 * @param file
-	 * @return when mime type is unknown, it simply returns "application/octet-stream"
-	 */
-	public static String getMimeType(File file)
-	{
-		String mimeType = null;
-		try
-		{
-			mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(file.getCanonicalPath()));
-		}
-		catch(IOException e)
-		{
-			Logger.e(e.toString());
-		}
-		if(mimeType == null)
-			mimeType = "application/octet-stream";
-
-		return mimeType;
-	}
-
-	/**
 	 * 
 	 * @param id
 	 * @return
@@ -562,7 +492,7 @@ final public class ApacheHttpUtility
 	/**
 	 * 
 	 */
-	public void cancelAllAsynccHttpTasks()
+	public void cancelAllAsyncHttpTasks()
 	{
 		Logger.v("canceling all async http tasks");
 
