@@ -45,7 +45,7 @@ import android.os.Handler;
  * @author meinside@gmail.com
  * @since 10.10.28.
  * 
- * last update 10.11.24.
+ * last update 11.03.10.
  *
  */
 public class MultipleSoundPlayer<F> extends SoundPlayer
@@ -56,10 +56,6 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 	private long gapTimeMillis;
 	private boolean isFixedRate;
 	private AsyncSoundTask asyncSoundTask;
-	
-	private F currentSound;
-	private Integer currentAsyncTaskHash;
-
 
 	/**
 	 * 
@@ -75,8 +71,6 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 			Logger.e("listener is null");
 		}
 		this.listener = listener;
-		
-		currentAsyncTaskHash = -1;
 	}
 
 	/**
@@ -96,9 +90,6 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 				Logger.v("cancelled previous async sound task");
 			}
 		}
-
-		currentAsyncTaskHash = -1;
-		currentSound = null;
 				
 		stop();
 	}
@@ -128,14 +119,10 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 				Logger.v("cancelled previous async sound task");
 			}
 		}
-
-		currentAsyncTaskHash = -1;
-		currentSound = null;
 			
 		stop();
 
 		asyncSoundTask = new AsyncSoundTask();
-		currentAsyncTaskHash = asyncSoundTask.hashCode();
 		asyncSoundTask.execute(handler, soundFiles);
 	}
 
@@ -147,6 +134,7 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 	protected class AsyncSoundTask extends AsyncTask<Object, Integer, ArrayList<F>>
 	{
 		private Handler handler;
+		private F currentSound;
 
 		@Override
 		protected void onPreExecute()
@@ -168,112 +156,87 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 
 			while(files.size() > 0)
 			{
+				if(isCancelled())
+					return null;
+
 				//current sound's play will start
-				synchronized(currentAsyncTaskHash)
-				{
-					if(currentAsyncTaskHash == this.hashCode())
-					{
-						currentSound = files.remove(0);
+				currentSound = files.remove(0);
 
-						if(listener != null && handler != null)
+				if(listener != null && handler != null)
+				{
+					handler.post(new Runnable(){
+						@Override
+						public void run()
 						{
-							if(currentAsyncTaskHash == this.hashCode())
-								handler.post(new Runnable(){
-									@Override
-									public void run()
-									{
-										listener.soundWillBePlayed(currentSound);
-									}});
-							else
-								break;
-						}
-					}
-					else
-						break;
+							listener.soundWillBePlayed(currentSound);
+						}});
 				}
 
-				synchronized(currentAsyncTaskHash)
-				{
-					if(currentAsyncTaskHash != this.hashCode())
-						break;
+				if(isCancelled())
+					return null;
 
-					Class<? extends Object> currentArgClass = currentSound.getClass();
-					if(currentArgClass == Integer.class)
-					{
-						play(context, ((Integer)currentSound).intValue());
-					}
-					else if(currentArgClass == String.class)
-					{
-						play((String)currentSound);
-					}
-					else if(currentArgClass == File.class)
-					{
-						play(((File)currentSound).getAbsolutePath());
-					}
-					else
-					{
-						Logger.e("not a proper type: " + currentArgClass.getName());
-						
-						//current sound's play failed
-						if(currentAsyncTaskHash == this.hashCode())
-						{
-							if(listener != null && handler != null)
-								handler.post(new Runnable(){
-									@Override
-									public void run()
-									{
-										listener.soundPlayFailed(currentSound);
-									}});
-						}
-					}
+				Class<? extends Object> currentArgClass = currentSound.getClass();
+				if(currentArgClass == Integer.class)
+				{
+					play(context, ((Integer)currentSound).intValue());
 				}
-
-				//current sound's play finished
-				synchronized(currentAsyncTaskHash)
+				else if(currentArgClass == String.class)
 				{
-					if(currentAsyncTaskHash == this.hashCode())
-					{
-						if(listener != null && handler != null)
-							handler.post(new Runnable(){
-								@Override
-								public void run()
-								{
-									listener.soundPlayFinished(currentSound);
-								}});
-					}
+					play((String)currentSound);
 				}
-
-				synchronized(currentAsyncTaskHash)
+				else if(currentArgClass == File.class)
 				{
-					if(currentAsyncTaskHash == this.hashCode())
-					{
-						long timeToSleep = gapTimeMillis + (isFixedRate ? 0 : SoundUtility.getDurationOfSound(context, currentSound));
-						try
-						{
-							Thread.sleep(timeToSleep);
-						}
-						catch(InterruptedException e)	//it doesn't do harm
-						{
-							Logger.v(e.toString());
-						}
-					}
+					play(((File)currentSound).getAbsolutePath());
 				}
-			}
-
-			//all sound plays were finished
-			synchronized(currentAsyncTaskHash)
-			{
-				if(currentAsyncTaskHash == this.hashCode())
+				else
 				{
+					Logger.e("not a proper type: " + currentArgClass.getName());
+					
+					//current sound's play failed
 					if(listener != null && handler != null)
 						handler.post(new Runnable(){
 							@Override
 							public void run()
 							{
-								listener.allSoundPlaysFinished();
+								listener.soundPlayFailed(currentSound);
 							}});
 				}
+
+				if(isCancelled())
+					return null;
+
+				//sleep
+				long timeToSleep = gapTimeMillis + (isFixedRate ? 0 : SoundUtility.getDurationOfSound(context, currentSound));
+				try
+				{
+					Thread.sleep(timeToSleep);
+				}
+				catch(InterruptedException e)	//it doesn't do harm
+				{
+					Logger.v(e.toString());
+				}
+
+				if(isCancelled())
+					return null;
+
+				//current sound's play finished
+				if(listener != null && handler != null)
+					handler.post(new Runnable(){
+						@Override
+						public void run()
+						{
+							listener.soundPlayFinished(currentSound);
+						}});
 			}
+
+			//all sound plays were finished
+			if(listener != null && handler != null)
+				handler.post(new Runnable(){
+					@Override
+					public void run()
+					{
+						listener.allSoundPlaysFinished();
+					}});
 
 			return null;
 		}
@@ -282,12 +245,6 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 		protected void onPostExecute(ArrayList<F> played)
 		{
 			super.onPostExecute(played);
-			
-			synchronized(currentAsyncTaskHash)
-			{
-				if(currentAsyncTaskHash == this.hashCode())
-					currentAsyncTaskHash = -1;
-			}
 
 			Logger.v("finished playing multiple files");
 		}
@@ -324,3 +281,4 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 		public void soundPlayFailed(F file);
 	}
 }
+

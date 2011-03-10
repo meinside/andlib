@@ -49,7 +49,7 @@ import android.net.Uri;
  * @author meinside@gmail.com
  * @since 10.02.28.
  * 
- * last update 10.10.29.
+ * last update 11.03.10.
  *
  */
 public class SoundPlayer
@@ -60,6 +60,8 @@ public class SoundPlayer
 	
 	protected OnCompletionListener onCompletionListener = null;
 	protected OnErrorListener onErrorListener = null;
+	
+	protected float leftVolume, rightVolume;
 
 	
 	/**
@@ -79,6 +81,9 @@ public class SoundPlayer
 	{
 		onCompletionListener = completionListener;
 		onErrorListener = errorListener;
+		
+		leftVolume = 1.0f;
+		rightVolume = 1.0f;
 	}
 
 	/**
@@ -104,6 +109,17 @@ public class SoundPlayer
 			sharedInstance.stop();
 			sharedInstance = null;
 		}
+	}
+
+	/**
+	 * 
+	 * @param leftVolume
+	 * @param rightVolume
+	 */
+	public void setVolumes(float leftVolume, float rightVolume)
+	{
+		this.leftVolume = leftVolume;
+		this.rightVolume = rightVolume;
 	}
 	
 	/**
@@ -165,6 +181,7 @@ public class SoundPlayer
         {
 			player = MediaPlayer.create(context, resid);
 			setListeners();
+			player.setVolume(leftVolume, rightVolume);
 			player.start();
         }
         catch(Exception e)
@@ -194,6 +211,7 @@ public class SoundPlayer
 	        player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 	        afd.close();
 	        player.prepare();
+	        player.setVolume(leftVolume, rightVolume);
 			player.start();
         }
         catch(Exception e)
@@ -219,6 +237,7 @@ public class SoundPlayer
 			setListeners();
 			player.setDataSource(filepath);
 			player.prepare();
+			player.setVolume(leftVolume, rightVolume);
 			player.start();
         }
         catch(Exception e)
@@ -243,6 +262,7 @@ public class SoundPlayer
         {
 			player = MediaPlayer.create(context, fileuri);
 			setListeners();
+			player.setVolume(leftVolume, rightVolume);
 			player.start();
         }
         catch(Exception e)
