@@ -61,7 +61,7 @@ import android.widget.RemoteViews;
  * @author meinside@gmail.com
  * @since 10.11.05.
  * 
- * last update 11.02.08.
+ * last update 11.03.13.
  *
  */
 public abstract class FileDownloadService extends Service
@@ -72,8 +72,8 @@ public abstract class FileDownloadService extends Service
 	private NotificationManager notificationManager;
 	private final IBinder binder = new FileDownloadBinder();
 	private AsyncDownloadTask task = null;
-	
-	private boolean isRunning;
+
+	protected static boolean isRunning = false;
 
     public class FileDownloadBinder extends Binder
     {
@@ -83,12 +83,24 @@ public abstract class FileDownloadService extends Service
         }
     }
 
+    /**
+     * 
+     * @return if service is running or not
+     */
+    public static boolean isRunning()
+    {
+    	return isRunning;
+    }
+
 	@Override
 	public void onCreate()
 	{
+		if(isRunning)
+			return;
+		else
+			isRunning = true;
+
 		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-		
-		isRunning = true;
 
 		//start downloading immediately
 		task = new AsyncDownloadTask();
@@ -106,13 +118,13 @@ public abstract class FileDownloadService extends Service
 	@Override
 	public void onDestroy()
 	{
-		isRunning = false;
-		
 		if(task != null)
 		{
 			if(!task.isCancelled())
 				task.cancel(true);
 		}
+
+		isRunning = false;
 		
 		Logger.v("service destroyed");
 	}
@@ -289,7 +301,7 @@ public abstract class FileDownloadService extends Service
 	 * @author meinside@gmail.com
 	 * @since 10.11.05.
 	 * 
-	 * last update 10.11.05.
+	 * last update 11.03.13.
 	 *
 	 */
 	private class AsyncDownloadTask extends AsyncTask<Void, Void, Void>
@@ -327,6 +339,9 @@ public abstract class FileDownloadService extends Service
 
 				try
 				{
+					if(isCancelled())
+						return null;
+
 					URL url = new URL(remoteFilepath);
 					int filesize = HttpUtility.getFileSizeAtURL(url);
 					
@@ -342,13 +357,13 @@ public abstract class FileDownloadService extends Service
 						int bytesRead, totalBytesRead = 0;
 						byte[] bytes = new byte[BYTES_BUFFER_SIZE];
 						String progress, kbytes;
-						while((bytesRead = bis.read(bytes)) != -1 && isRunning)
+						while(!isCancelled() && (bytesRead = bis.read(bytes)) != -1)
 						{
 							totalBytesRead += bytesRead;
 							fos.write(bytes, 0, bytesRead);
 
 							//don't show notification too often
-							if(loopCount++ % 20 == 0)
+							if(!isCancelled() && loopCount++ % 20 == 0)
 							{
 								RemoteViews progressView = getProgressView(successCount + 1, numTotalFiles, totalBytesRead, filesize);
 								if(progressView == null)
@@ -356,25 +371,21 @@ public abstract class FileDownloadService extends Service
 									progress = String.format("Download Progress (%d / %d)", successCount + 1, numTotalFiles);
 									kbytes = String.format("%s / %s", getStringByteSize(totalBytesRead), getStringByteSize(filesize));
 
-									showNotification("Downloading File(s)", progress , kbytes);
+									if(!isCancelled())
+										showNotification("Downloading File(s)", progress , kbytes);
 								}
 								else
 								{
-									showNotification(progressView, "Downloading File(s)");
+									if(!isCancelled())
+										showNotification(progressView, "Downloading File(s)");
 								}
 							}
 						}
 						fos.close();
 						bis.close();
 						
-						if(!isRunning)
-						{
-							Logger.v("cancelled by user");
-
-							showNotification("Download Cancelled", "Download Progress", "Download Cancelled");
-							
+						if(isCancelled())
 							return null;
-						}
 						
 						successCount ++;
 					}
