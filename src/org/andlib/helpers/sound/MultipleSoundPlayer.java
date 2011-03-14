@@ -36,7 +36,6 @@ import org.andlib.helpers.Logger;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Handler;
 
 
 /**
@@ -45,7 +44,7 @@ import android.os.Handler;
  * @author meinside@gmail.com
  * @since 10.10.28.
  * 
- * last update 11.03.10.
+ * last update 11.03.14.
  *
  */
 public class MultipleSoundPlayer<F> extends SoundPlayer
@@ -96,13 +95,12 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 
 	/**
 	 * 
-	 * @param handler
 	 * @param soundFiles an ArrayList of type: Integer(resource id), String(file path), or File
 	 * @param delayTimeMillis
 	 * @param gapTimeMillis
 	 * @param isFixedRate
 	 */
-	synchronized public void playSounds(Handler handler, ArrayList<F> soundFiles, long delayTimeMillis, long gapTimeMillis, boolean isFixedRate)
+	synchronized public void playSounds(ArrayList<F> soundFiles, long delayTimeMillis, long gapTimeMillis, boolean isFixedRate)
 	{
 		Logger.v("start playing multiple sound files: " + soundFiles);
 
@@ -123,7 +121,7 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 		stop();
 
 		asyncSoundTask = new AsyncSoundTask();
-		asyncSoundTask.execute(handler, soundFiles);
+		asyncSoundTask.execute(soundFiles);
 	}
 
 	/**
@@ -133,7 +131,6 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 	 */
 	protected class AsyncSoundTask extends AsyncTask<Object, Integer, ArrayList<F>>
 	{
-		private Handler handler;
 		private F currentSound;
 
 		@Override
@@ -151,8 +148,7 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 		@Override
 		protected ArrayList<F> doInBackground(Object... args)
 		{
-			handler = (Handler)args[0];
-			ArrayList<F> files = (ArrayList<F>)args[1];
+			ArrayList<F> files = (ArrayList<F>)args[0];
 
 			while(files.size() > 0)
 			{
@@ -162,15 +158,8 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 				//current sound's play will start
 				currentSound = files.remove(0);
 
-				if(listener != null && handler != null)
-				{
-					handler.post(new Runnable(){
-						@Override
-						public void run()
-						{
-							listener.soundWillBePlayed(currentSound);
-						}});
-				}
+				if(listener != null)
+					listener.soundWillBePlayed(currentSound);
 
 				if(isCancelled())
 					return null;
@@ -193,13 +182,8 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 					Logger.e("not a proper type: " + currentArgClass.getName());
 					
 					//current sound's play failed
-					if(listener != null && handler != null)
-						handler.post(new Runnable(){
-							@Override
-							public void run()
-							{
-								listener.soundPlayFailed(currentSound);
-							}});
+					if(listener != null)
+						listener.soundPlayFailed(currentSound);
 				}
 
 				if(isCancelled())
@@ -220,23 +204,13 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 					return null;
 
 				//current sound's play finished
-				if(listener != null && handler != null)
-					handler.post(new Runnable(){
-						@Override
-						public void run()
-						{
-							listener.soundPlayFinished(currentSound);
-						}});
+				if(listener != null)
+					listener.soundPlayFinished(currentSound);
 			}
 
 			//all sound plays were finished
-			if(listener != null && handler != null)
-				handler.post(new Runnable(){
-					@Override
-					public void run()
-					{
-						listener.allSoundPlaysFinished();
-					}});
+			if(listener != null)
+				listener.allSoundPlaysFinished();
 
 			return null;
 		}
