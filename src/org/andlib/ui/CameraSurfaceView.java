@@ -46,10 +46,10 @@ import android.view.SurfaceView;
  * @author meinside@gmail.com
  * @since 10.03.17.
  * 
- * last update 11.02.08.
+ * last update 11.03.20.
  *
  */
-public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Camera.PictureCallback, Camera.ShutterCallback
+public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Camera.PictureCallback, Camera.ShutterCallback, Camera.PreviewCallback
 {
 	private static SurfaceHolder holder = null;
 	protected static Camera camera = null;
@@ -166,6 +166,12 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 	 */
 	@Override
 	abstract public void onPictureTaken(byte[] data, Camera camera);
+
+	/**
+	 * implement this to do something with preview frame
+	 */
+	@Override
+	abstract public void onPreviewFrame(byte[] data, Camera camera);
 
 	/**
 	 * override this function to do something more on shutter
