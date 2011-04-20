@@ -49,7 +49,7 @@ import android.view.View;
  * @author meinside@gmail.com
  * @since 10.01.26.
  * 
- * last update 10.04.13.
+ * last update 11.04.20.
  *
  */
 public class SimplePaintView extends View
@@ -59,14 +59,14 @@ public class SimplePaintView extends View
 	public static final int DEFAULT_STROKEWIDTH = 2;
 	public static final float TOUCH_THRESHOLD = 2.0f;
 
-	protected Paint paint;
-	protected Canvas canvas;
+	protected Paint drawPaint;
+	protected Canvas backCanvas;
 
 	protected int currentBgColor = DEFAULT_BGCOLOR;
 	protected int currentFgColor = DEFAULT_FGCOLOR;
 
-	private Bitmap bitmap;
-	private Path path;
+	private Bitmap backBitmap;
+	private Path drawPath;
 	private Paint bitmapPaint;
 
 	private float currentX, currentY;
@@ -113,18 +113,18 @@ public class SimplePaintView extends View
 		int width = View.MeasureSpec.getSize(widthMeasureSpec);
 		int height = View.MeasureSpec.getSize(heightMeasureSpec);
 
-		paint = new Paint();
-		paint.setAntiAlias(true);
-		paint.setDither(true);
-		paint.setColor(currentFgColor);
-		paint.setStyle(Paint.Style.STROKE);
-		paint.setStrokeJoin(Paint.Join.ROUND);
-		paint.setStrokeCap(Paint.Cap.ROUND);
-		paint.setStrokeWidth(DEFAULT_STROKEWIDTH);
+		drawPaint = new Paint();
+		drawPaint.setAntiAlias(true);
+		drawPaint.setDither(true);
+		drawPaint.setColor(currentFgColor);
+		drawPaint.setStyle(Paint.Style.STROKE);
+		drawPaint.setStrokeJoin(Paint.Join.ROUND);
+		drawPaint.setStrokeCap(Paint.Cap.ROUND);
+		drawPaint.setStrokeWidth(DEFAULT_STROKEWIDTH);
 
-		bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-		canvas = new Canvas(bitmap);
-		path = new Path();
+		backBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+		backCanvas = new Canvas(backBitmap);
+		drawPath = new Path();
 		bitmapPaint = new Paint(Paint.DITHER_FLAG);
 	}
 
@@ -138,9 +138,9 @@ public class SimplePaintView extends View
 	protected void onDraw(Canvas canvas)
 	{
 		canvas.drawColor(currentBgColor);
-		canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);
-		paint.setColor(currentFgColor);
-		canvas.drawPath(path, paint);
+		canvas.drawBitmap(backBitmap, 0, 0, bitmapPaint);
+		drawPaint.setColor(currentFgColor);
+		canvas.drawPath(drawPath, drawPaint);
 	}
 
 	/**
@@ -150,8 +150,8 @@ public class SimplePaintView extends View
 	 */
 	private void touchStart(float x, float y)
 	{
-		path.reset();
-		path.moveTo(x, y);
+		drawPath.reset();
+		drawPath.moveTo(x, y);
 		currentX = x;
 		currentY = y;
 	}
@@ -167,7 +167,7 @@ public class SimplePaintView extends View
 		float dy = Math.abs(y - currentY);
 		if(dx >= TOUCH_THRESHOLD || dy >= TOUCH_THRESHOLD)
 		{
-			path.quadTo(currentX, currentY, (x + currentX) / 2, (y + currentY) / 2);
+			drawPath.quadTo(currentX, currentY, (x + currentX) / 2, (y + currentY) / 2);
 			currentX = x;
 			currentY = y;
 		}
@@ -178,14 +178,14 @@ public class SimplePaintView extends View
 	 */
 	private void touchUp()
 	{
-		path.lineTo(currentX, currentY);
+		drawPath.lineTo(currentX, currentY);
 
-		//commit the path to our offscreen
-		paint.setColor(currentFgColor);
-		canvas.drawPath(path, paint);
+		//commit the drawPath to our offscreen
+		drawPaint.setColor(currentFgColor);
+		backCanvas.drawPath(drawPath, drawPaint);
 
 		//kill this so we don't double draw
-		path.reset();
+		drawPath.reset();
 	}
 
 	@Override
@@ -214,20 +214,20 @@ public class SimplePaintView extends View
 
 	/**
 	 *  
-	 * @return reference to the bitmap
+	 * @return reference to the backBitmap
 	 */
 	public Bitmap getBitmap()
 	{
-		return bitmap;
+		return backBitmap;
 	}
 	
 	/**
 	 * 
-	 * @return immutable copy of the bitmap
+	 * @return immutable copy of the backBitmap
 	 */
 	public Bitmap copyBitmap()
 	{
-		return bitmap.copy(Bitmap.Config.ARGB_8888, false);
+		return backBitmap.copy(Bitmap.Config.ARGB_8888, false);
 	}
 	
 	/**
@@ -241,7 +241,7 @@ public class SimplePaintView extends View
 	{
 		try
 		{
-			return bitmap.compress(format, quality, new FileOutputStream(outputLocation));
+			return backBitmap.compress(format, quality, new FileOutputStream(outputLocation));
 		}
 		catch(Exception e)
 		{
@@ -252,11 +252,11 @@ public class SimplePaintView extends View
 	}
 
 	/**
-	 * clears canvas
+	 * clears backCanvas
 	 */
 	public void clear()
 	{
-        canvas.drawColor(currentBgColor);
+        backCanvas.drawColor(currentBgColor);
         invalidate();
 	}
 
@@ -286,7 +286,7 @@ public class SimplePaintView extends View
 	 */
 	public void setStrokeWidth(int width)
 	{
-		paint.setStrokeWidth(width);
+		drawPaint.setStrokeWidth(width);
 	}
 
 	/**
@@ -297,6 +297,6 @@ public class SimplePaintView extends View
 	 */
 	public void setMaskFilter(MaskFilter filter)
 	{
-		paint.setMaskFilter(filter);
+		drawPaint.setMaskFilter(filter);
 	}
 }
