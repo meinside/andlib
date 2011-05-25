@@ -254,7 +254,7 @@ public class ImageButton extends Button
 						//Logger.v("button is up (out of bounds)");
 					}
 
-					//edited by jspark - 2011.05.25.
+					//edited by jipark - 2011.05.25.
 					if(!isEnabled())
 						changeToDisabledState();
 					else
