@@ -59,7 +59,7 @@ import android.widget.Button;
  * @author meinside@gmail.com
  * @since 10.11.22.
  * 
- * last update 11.02.08.
+ * last update 11.05.25.
  *
  */
 public class ImageButton extends Button
@@ -254,8 +254,12 @@ public class ImageButton extends Button
 						//Logger.v("button is up (out of bounds)");
 					}
 
-					changeToNormalState();
-					
+					//edited by jspark - 2011.05.25.
+					if(!isEnabled())
+						changeToDisabledState();
+					else
+						changeToNormalState();
+
 					isDown = false;
 					return true;
 				}
