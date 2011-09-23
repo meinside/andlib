@@ -126,6 +126,9 @@ public class SimpleHttpResponse implements Parcelable
 			int index = 0;
 			for(String key: httpHeaders.keySet())
 			{
+				if(key == null)	//skip header with null name (fix for honeycomb?)
+					continue;
+
 				List<String> values = httpHeaders.get(key);
 				StringBuffer valuesBuffer = new StringBuffer();
 				for(String value: values)
