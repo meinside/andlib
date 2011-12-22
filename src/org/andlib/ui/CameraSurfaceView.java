@@ -46,7 +46,7 @@ import android.view.SurfaceView;
  * @author meinside@gmail.com
  * @since 10.03.17.
  * 
- * last update 11.03.20.
+ * last update 11.12.22.
  *
  */
 public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Camera.PictureCallback, Camera.ShutterCallback, Camera.PreviewCallback
@@ -103,16 +103,24 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 	}
 
+	/**
+	 * override this function to alter camera parameters (preview size, picture size, and so on)
+	 */
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
 	{
 		Logger.v("surfaceChanged");
 		
 		Camera.Parameters params = camera.getParameters();
+
 		Size optimalSize = ImageUtility.getOptimalPreviewSize(params.getSupportedPreviewSizes(), width, height);
 		params.setPreviewSize(optimalSize.width, optimalSize.height);
+		params.setPictureSize(optimalSize.width, optimalSize.height);
+
 		params.setPictureFormat(PixelFormat.JPEG);
+
 		camera.setParameters(params);
+
 		camera.startPreview();
 	}
 
@@ -175,20 +183,10 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 
 	/**
 	 * override this function to do something more on shutter
-	 * <br>
-	 * <br>
-	 * XXX: functions such as Camera.Parameters.setPictureSize() should be called here
-	 * <br>
-	 * (<b>cause</b>: http://groups.google.com/group/android-developers/browse_thread/thread/8ab0cb7a7e243d98)
 	 */
 	@Override
 	public void onShutter()
 	{
 		Logger.v("onShutter");
-
-		Camera.Parameters params = camera.getParameters();
-		Size optimalSize = ImageUtility.getOptimalPreviewSize(params.getSupportedPictureSizes(), getWidth(), getHeight());
-		params.setPictureSize(optimalSize.width, optimalSize.height);
-		camera.setParameters(params);
 	}
 }
