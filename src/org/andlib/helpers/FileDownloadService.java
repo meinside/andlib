@@ -54,8 +54,6 @@ public abstract class FileDownloadService extends Service
         }
     }
 
-	private Notification.Builder builder = new Notification.Builder(getApplicationContext());
-
     /**
      * 
      * @return if service is running or not
@@ -228,8 +226,7 @@ public abstract class FileDownloadService extends Service
 	{
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, getIntentForLatestInfo()), Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-		//FIXXX - deprecated
-//		Notification notification = new Notification(getNotificationIcon(), ticker, System.currentTimeMillis());
+		Notification.Builder builder = new Notification.Builder(getApplicationContext());
 		builder.setSmallIcon(getNotificationIcon());
 		builder.setTicker(ticker);
 		builder.setWhen(System.currentTimeMillis());
@@ -252,8 +249,7 @@ public abstract class FileDownloadService extends Service
 	{
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, getIntentForLatestInfo()), Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-		//FIXXX - deprecated
-//		Notification notification = new Notification(getNotificationIcon(), ticker, System.currentTimeMillis());
+		Notification.Builder builder = new Notification.Builder(getApplicationContext());
 		builder.setSmallIcon(getNotificationIcon());
 		builder.setTicker(ticker);
 		builder.setWhen(System.currentTimeMillis());
