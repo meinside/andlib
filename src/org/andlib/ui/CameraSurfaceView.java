@@ -4,7 +4,7 @@ import org.andlib.helpers.Logger;
 import org.andlib.helpers.image.ImageUtility;
 
 import android.content.Context;
-import android.graphics.PixelFormat;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.util.AttributeSet;
@@ -17,7 +17,7 @@ import android.view.SurfaceView;
  * @author meinside@gmail.com
  * @since 10.03.17.
  * 
- * last update 11.12.22.
+ * last update 12.05.29.
  *
  */
 public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Camera.PictureCallback, Camera.ShutterCallback, Camera.PreviewCallback
@@ -71,7 +71,8 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 		
 		holder = getHolder();
 		holder.addCallback(this);
-		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		//FIXXX - deprecated
+//		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 	}
 
 	/**
@@ -88,7 +89,7 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 		params.setPreviewSize(optimalSize.width, optimalSize.height);
 		params.setPictureSize(optimalSize.width, optimalSize.height);
 
-		params.setPictureFormat(PixelFormat.JPEG);
+		params.setPictureFormat(ImageFormat.JPEG);
 
 		camera.setParameters(params);
 

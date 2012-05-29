@@ -2,6 +2,7 @@ package org.andlib.ui;
 
 import org.andlib.helpers.Logger;
 import org.andlib.http.OAuthBase;
+import org.andlib.http.OAuthBase.AuthUrlListener;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -15,7 +16,7 @@ import android.webkit.WebViewClient;
  * @author meinside@gmail.com
  * @since 10.11.07.
  * 
- * last update 11.02.08.
+ * last update 12.05.29.
  *
  */
 public abstract class OAuthAuthView extends WebView
@@ -72,11 +73,20 @@ public abstract class OAuthAuthView extends WebView
 		OAuthBase oauth = getOAuthBaseForLoadingAuthPage();
 		if(oauth != null)
 		{
-			String url = oauth.getUserAuthUrl();
-			if(url != null)
-				loadUrl(url);
-			else
-				Logger.e("returned url of auth page is null");
+			oauth.requestUserAuthUrl(new AuthUrlListener(){
+				@Override
+				public void authUrlReceiveFailed(int errorCode, String errorMessage)
+				{
+					Logger.e("receiving auth url failed - " + errorCode + ", " + errorMessage);
+					
+					onAuthUrlError(errorCode, errorMessage);
+				}
+
+				@Override
+				public void authUrlReceived(String url)
+				{
+					loadUrl(url);
+				}});
 		}
 		else
 			Logger.e("OAuthBase object is null");
@@ -88,6 +98,14 @@ public abstract class OAuthAuthView extends WebView
 	 * @return
 	 */
 	protected abstract OAuthBase getOAuthBaseForLoadingAuthPage();
+
+	/**
+	 * implement this function to show any alert or error message for not receiving auth url successfully
+	 * 
+	 * @param errorCode
+	 * @param errorMessage
+	 */
+	protected abstract void onAuthUrlError(int errorCode, String errorMessage);
 
 	/**
 	 * 

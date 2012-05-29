@@ -32,7 +32,7 @@ import android.widget.RemoteViews;
  * @author meinside@gmail.com
  * @since 10.11.05.
  * 
- * last update 11.03.13.
+ * last update 12.05.29.
  *
  */
 public abstract class FileDownloadService extends Service
@@ -53,6 +53,8 @@ public abstract class FileDownloadService extends Service
             return FileDownloadService.this;
         }
     }
+
+	private Notification.Builder builder = new Notification.Builder(getApplicationContext());
 
     /**
      * 
@@ -224,11 +226,20 @@ public abstract class FileDownloadService extends Service
 	 */
 	protected void showNotification(String ticker, String title, String content)
 	{
-		Notification notification = new Notification(getNotificationIcon(), ticker, System.currentTimeMillis());
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, getIntentForLatestInfo()), Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		notification.setLatestEventInfo(getApplicationContext(), title, content, contentIntent);
+
+		//FIXXX - deprecated
+//		Notification notification = new Notification(getNotificationIcon(), ticker, System.currentTimeMillis());
+		builder.setSmallIcon(getNotificationIcon());
+		builder.setTicker(ticker);
+		builder.setWhen(System.currentTimeMillis());
+		builder.setContentTitle(title);
+		builder.setContentText(content);
+		builder.setContentIntent(contentIntent);
+
+		Notification notification = builder.getNotification();
 		notification.flags = getNotificationFlag();
-		
+
 		notificationManager.notify(SERVICE_ID, notification);
 	}
 
@@ -239,9 +250,17 @@ public abstract class FileDownloadService extends Service
 	 */
 	protected void showNotification(RemoteViews remoteView, String ticker)
 	{
-		Notification notification = new Notification(getNotificationIcon(), ticker, System.currentTimeMillis());
-		notification.contentView = remoteView;
-		notification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, getIntentForLatestInfo()), Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, getIntentForLatestInfo()), Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+		//FIXXX - deprecated
+//		Notification notification = new Notification(getNotificationIcon(), ticker, System.currentTimeMillis());
+		builder.setSmallIcon(getNotificationIcon());
+		builder.setTicker(ticker);
+		builder.setWhen(System.currentTimeMillis());
+		builder.setContent(remoteView);
+		builder.setContentIntent(contentIntent);
+		
+		Notification notification = builder.getNotification();
 		notification.flags = getNotificationFlag();
 		
 		notificationManager.notify(SERVICE_ID, notification);

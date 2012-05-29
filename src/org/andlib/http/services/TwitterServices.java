@@ -1,10 +1,10 @@
 package org.andlib.http.services;
 
+import java.io.File;
 import java.util.HashMap;
 
 import org.andlib.helpers.Logger;
 import org.andlib.http.OAuthBase;
-import org.andlib.http.SimpleHttpResponse;
 
 import android.os.Handler;
 
@@ -13,7 +13,7 @@ import android.os.Handler;
  * @author meinside@gmail.com
  * @since 10.01.14.
  * 
- * last update 10.11.02.
+ * last update 12.05.29.
  *
  */
 public class TwitterServices extends OAuthBase
@@ -24,13 +24,14 @@ public class TwitterServices extends OAuthBase
 
 	public static final int TWITTER_MESSAGE_MAX_LENGTH = 140;
 
-	public static final String TWITTER_VERIFY_CREDENTIALS_URL = "http://api.twitter.com/1/account/verify_credentials.json";
-	public static final String TWITTER_STATUSES_UPDATE_URL = "http://api.twitter.com/1/statuses/update.json";
-	public static final String TWITTER_STATUSES_RETWEET_URL = "http://api.twitter.com/1/statuses/retweet/%s.json";
-	public static final String TWITTER_FRIENDSHIP_CHECK_URL = "http://api.twitter.com/1/friendships/exists.json";
-	public static final String TWITTER_FOLLOW_URL = "http://api.twitter.com/1/friendships/create.json";
-	public static final String TWITTER_UNFOLLOW_URL = "http://api.twitter.com/1/friendships/destroy.json";
-	public static final String TWITTER_DIRECT_MESSAGE_WRITE_URL = "http://api.twitter.com/1/direct_messages/new.json";
+	public static final String TWITTER_VERIFY_CREDENTIALS_URL = "https://api.twitter.com/1/account/verify_credentials.json";
+	public static final String TWITTER_STATUSES_UPDATE_URL = "https://api.twitter.com/1/statuses/update.json";
+	public static final String TWITTER_STATUSES_UPDATE_WITH_MEDIA_URL = "https://upload.twitter.com/1/statuses/update_with_media.json";
+	public static final String TWITTER_STATUSES_RETWEET_URL = "https://api.twitter.com/1/statuses/retweet/%s.json";
+	public static final String TWITTER_FRIENDSHIP_CHECK_URL = "https://api.twitter.com/1/friendships/exists.json";
+	public static final String TWITTER_FOLLOW_URL = "https://api.twitter.com/1/friendships/create.json";
+	public static final String TWITTER_UNFOLLOW_URL = "https://api.twitter.com/1/friendships/destroy.json";
+	public static final String TWITTER_DIRECT_MESSAGE_WRITE_URL = "https://api.twitter.com/1/direct_messages/new.json";
 	
 	private String screenName = null;
 
@@ -87,22 +88,6 @@ public class TwitterServices extends OAuthBase
 	/**
 	 * http://dev.twitter.com/doc/get/account/verify_credentials
 	 * 
-	 * @return json result of verify_credentials
-	 */
-	public SimpleHttpResponse verifyCredentials()
-	{
-		if(!isAuthorized)
-		{
-			Logger.i("not authorized yet");
-			return null;
-		}
-
-		return this.get(TWITTER_VERIFY_CREDENTIALS_URL, null);
-	}
-
-	/**
-	 * http://dev.twitter.com/doc/get/account/verify_credentials
-	 * 
 	 * @param resultHandler
 	 * @return id of AsyncHttpTask that is assigned to this job
 	 */
@@ -115,48 +100,6 @@ public class TwitterServices extends OAuthBase
 		}
 
 		return this.getAsync(resultHandler, TWITTER_VERIFY_CREDENTIALS_URL, null);
-	}
-
-	/**
-	 * http://dev.twitter.com/doc/post/statuses/update
-	 * 
-	 * @param status status text
-	 * @param inReplyToStatusId existing status' id that this update replies to (null if none)
-	 * @param latitude -90.0 ~ +90.0 (null if none)
-	 * @param longitude -180.0 ~ +180.0 (null if none)
-	 * @param placeId place id that this update will be attached to (nil if none)
-	 * @param displayCoordinate display coordinate or not
-	 * @return json result of status update
-	 */
-	public SimpleHttpResponse updateStatus(String status, String inReplyToStatusId, String latitude, String longitude, String placeId, boolean displayCoordinate)
-	{
-		if(!isAuthorized)
-		{
-			Logger.i("not authorized yet");
-			return null;
-		}
-
-		if(status.length() > TWITTER_MESSAGE_MAX_LENGTH)
-		{
-			Logger.i("status is too long (" + status.length() + ")");
-			return null;
-		}
-		
-		HashMap<String, Object> params = new HashMap<String, Object>();
-		if(status != null)
-			params.put("status", status);
-		if(inReplyToStatusId != null)
-			params.put("in_reply_to_status_id", inReplyToStatusId);
-		if(latitude != null)
-			params.put("lat", latitude);
-		if(longitude != null)
-			params.put("long", longitude);
-		if(placeId != null)
-			params.put("place_id", placeId);
-		if(!displayCoordinate)
-			params.put("display_coordinates", "false");
-
-		return this.post(TWITTER_STATUSES_UPDATE_URL, params);
 	}
 
 	/**
@@ -203,12 +146,19 @@ public class TwitterServices extends OAuthBase
 	}
 
 	/**
-	 * http://dev.twitter.com/doc/post/statuses/retweet/:id
+	 * https://dev.twitter.com/docs/api/1/post/statuses/update_with_media
 	 * 
-	 * @param statusId
-	 * @return json result of retweet
+	 * @param resultHandler
+	 * @param status
+	 * @param media
+	 * @param inReplyToStatusId
+	 * @param latitude
+	 * @param longitude
+	 * @param placeId
+	 * @param displayCoordinate
+	 * @return
 	 */
-	public SimpleHttpResponse retweet(String statusId)
+	public String updateStatusWithMedia(Handler resultHandler, String status, File media, String inReplyToStatusId, String latitude, String longitude, String placeId, boolean displayCoordinate)
 	{
 		if(!isAuthorized)
 		{
@@ -216,7 +166,29 @@ public class TwitterServices extends OAuthBase
 			return null;
 		}
 
-		return this.post(String.format(TWITTER_STATUSES_RETWEET_URL, statusId), null);
+		if(status.length() > TWITTER_MESSAGE_MAX_LENGTH)
+		{
+			Logger.i("status is too long (" + status.length() + ")");
+			return null;
+		}
+		
+		HashMap<String, Object> params = new HashMap<String, Object>();
+		if(status != null)
+			params.put("status", status);
+		if(media != null)
+			params.put("media", media);
+		if(inReplyToStatusId != null)
+			params.put("in_reply_to_status_id", inReplyToStatusId);
+		if(latitude != null)
+			params.put("lat", latitude);
+		if(longitude != null)
+			params.put("long", longitude);
+		if(placeId != null)
+			params.put("place_id", placeId);
+		if(!displayCoordinate)
+			params.put("display_coordinates", "false");
+
+		return this.postAsync(resultHandler, TWITTER_STATUSES_UPDATE_WITH_MEDIA_URL, params);
 	}
 
 	/**
@@ -235,27 +207,6 @@ public class TwitterServices extends OAuthBase
 		}
 
 		return this.postAsync(resultHandler, String.format(TWITTER_STATUSES_RETWEET_URL, statusId), null);
-	}
-
-	/**
-	 * http://dev.twitter.com/doc/get/friendships/exists
-	 * 
-	 * @param user
-	 * @return json result of friendship check
-	 */
-	public SimpleHttpResponse isFollowingUser(String user)
-	{
-		if(!isAuthorized)
-		{
-			Logger.i("not authorized yet");
-			return null;
-		}
-
-		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("user_a", screenName);
-		params.put("user_b", user);
-
-		return this.get(TWITTER_FRIENDSHIP_CHECK_URL, params);
 	}
 
 	/**
@@ -283,27 +234,6 @@ public class TwitterServices extends OAuthBase
 	/**
 	 * http://dev.twitter.com/doc/get/friendships/exists
 	 * 
-	 * @param user
-	 * @return json result of friendship check
-	 */
-	public SimpleHttpResponse isFollowedByUser(String user)
-	{
-		if(!isAuthorized)
-		{
-			Logger.i("not authorized yet");
-			return null;
-		}
-
-		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("user_a", user);
-		params.put("user_b", screenName);
-
-		return this.get(TWITTER_FRIENDSHIP_CHECK_URL, params);
-	}
-
-	/**
-	 * http://dev.twitter.com/doc/get/friendships/exists
-	 * 
 	 * @param resultHandler
 	 * @param user
 	 * @return id of AsyncHttpTask that is assigned to this job
@@ -321,26 +251,6 @@ public class TwitterServices extends OAuthBase
 		params.put("user_b", screenName);
 
 		return this.getAsync(resultHandler, TWITTER_FRIENDSHIP_CHECK_URL, params);
-	}
-
-	/**
-	 * http://dev.twitter.com/doc/post/friendships/create
-	 * 
-	 * @param userId
-	 * @return json result of following (if already following, HTTP 403 will be returned)
-	 */
-	public SimpleHttpResponse followUserId(String userId)
-	{
-		if(!isAuthorized)
-		{
-			Logger.i("not authorized yet");
-			return null;
-		}
-
-		HashMap<String, Object> params = new HashMap<String, Object>();
-		params.put("user_id", userId);
-
-		return this.post(TWITTER_FOLLOW_URL, params);
 	}
 
 	/**
@@ -367,26 +277,6 @@ public class TwitterServices extends OAuthBase
 	/**
 	 * http://dev.twitter.com/doc/post/friendships/create
 	 * 
-	 * @param screenName
-	 * @return json result of following (if already following, HTTP 403 will be returned)
-	 */
-	public SimpleHttpResponse followUser(String screenName)
-	{
-		if(!isAuthorized)
-		{
-			Logger.i("not authorized yet");
-			return null;
-		}
-
-		HashMap<String, Object> params = new HashMap<String, Object>();
-		params.put("screen_name", screenName);
-
-		return this.post(TWITTER_FOLLOW_URL, params);
-	}
-
-	/**
-	 * http://dev.twitter.com/doc/post/friendships/create
-	 * 
 	 * @param resultHandler
 	 * @param screenName
 	 * @return id of AsyncHttpTask that is assigned to this job
@@ -403,26 +293,6 @@ public class TwitterServices extends OAuthBase
 		params.put("screen_name", screenName);
 
 		return this.postAsync(resultHandler, TWITTER_FOLLOW_URL, params);
-	}
-
-	/**
-	 * http://dev.twitter.com/doc/post/friendships/destroy
-	 * 
-	 * @param userId
-	 * @return json result of unfollowing
-	 */
-	public SimpleHttpResponse unfollowUserId(String userId)
-	{
-		if(!isAuthorized)
-		{
-			Logger.i("not authorized yet");
-			return null;
-		}
-
-		HashMap<String, Object> params = new HashMap<String, Object>();
-		params.put("user_id", userId);
-
-		return this.post(TWITTER_UNFOLLOW_URL, params);
 	}
 
 	/**
@@ -449,26 +319,6 @@ public class TwitterServices extends OAuthBase
 	/**
 	 * http://dev.twitter.com/doc/post/friendships/destroy
 	 * 
-	 * @param screenName
-	 * @return json result of unfollowing
-	 */
-	public SimpleHttpResponse unfollowUser(String screenName)
-	{
-		if(!isAuthorized)
-		{
-			Logger.i("not authorized yet");
-			return null;
-		}
-
-		HashMap<String, Object> params = new HashMap<String, Object>();
-		params.put("screen_name", screenName);
-
-		return this.post(TWITTER_UNFOLLOW_URL, params);
-	}
-
-	/**
-	 * http://dev.twitter.com/doc/post/friendships/destroy
-	 * 
 	 * @param resultHandler
 	 * @param screenName
 	 * @return id of AsyncHttpTask that is assigned to this job
@@ -485,34 +335,6 @@ public class TwitterServices extends OAuthBase
 		params.put("screen_name", screenName);
 
 		return this.postAsync(resultHandler, TWITTER_UNFOLLOW_URL, params);
-	}
-
-	/**
-	 * http://dev.twitter.com/doc/post/direct_messages/new
-	 * 
-	 * @param message
-	 * @param userId
-	 * @return json result of sending DM
-	 */
-	public SimpleHttpResponse sendDirectMessageToUserId(String message, String userId)
-	{
-		if(!isAuthorized)
-		{
-			Logger.i("not authorized yet");
-			return null;
-		}
-
-		if(message.length() > TWITTER_MESSAGE_MAX_LENGTH)
-		{
-			Logger.i("message is too long (" + message.length() + ")");
-			return null;
-		}
-
-		HashMap<String, Object> params = new HashMap<String, Object>();
-		params.put("user_id", userId);
-		params.put("text", message);
-
-		return this.post(TWITTER_DIRECT_MESSAGE_WRITE_URL, params);
 	}
 
 	/**
@@ -542,34 +364,6 @@ public class TwitterServices extends OAuthBase
 		params.put("text", message);
 
 		return this.postAsync(resultHandler, TWITTER_DIRECT_MESSAGE_WRITE_URL, params);
-	}
-
-	/**
-	 * http://dev.twitter.com/doc/post/direct_messages/new
-	 * 
-	 * @param message
-	 * @param screenName
-	 * @return json result of sending DM
-	 */
-	public SimpleHttpResponse sendDirectMessageToUser(String message, String screenName)
-	{
-		if(!isAuthorized)
-		{
-			Logger.i("not authorized yet");
-			return null;
-		}
-
-		if(message.length() > TWITTER_MESSAGE_MAX_LENGTH)
-		{
-			Logger.i("message is too long (" + message.length() + ")");
-			return null;
-		}
-
-		HashMap<String, Object> params = new HashMap<String, Object>();
-		params.put("screen_name", screenName);
-		params.put("text", message);
-
-		return this.post(TWITTER_DIRECT_MESSAGE_WRITE_URL, params);
 	}
 
 	/**

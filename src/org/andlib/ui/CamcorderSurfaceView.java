@@ -20,7 +20,7 @@ import android.view.SurfaceView;
  * @author meinside@gmail.com
  * @since 10.11.04.
  * 
- * last update 11.02.08.
+ * last update 12.05.29.
  *
  */
 public class CamcorderSurfaceView extends SurfaceView implements SurfaceHolder.Callback
@@ -75,7 +75,9 @@ public class CamcorderSurfaceView extends SurfaceView implements SurfaceHolder.C
 		
 		holder = getHolder();
 		holder.addCallback(this);
-		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+
+		//FIXXX - deprecated
+//		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
 		recorder = new VideoRecorder(getPreferredOutputFormat(), getPreferredAudioSource(), getPreferredAudioEncoder(), MediaRecorderBase.DEFAULT_SAMPLING_RATE, MediaRecorderBase.DEFAULT_ENCODING_BITRATE, MediaRecorderBase.DEFAULT_NUM_CHANNELS, getPreferredVideoSource(), getPreferredVideoEncoder(), MediaRecorderBase.DEFAULT_FRAME_RATE, holder.getSurface(), getPrefferedMaxDurationMillis(), getPreferredMaxFileSize());
 	}

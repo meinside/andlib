@@ -23,7 +23,7 @@ import android.widget.TextView;
  * @author meinside@gmail.com
  * @since 10.11.15.
  * 
- * last update 11.02.08.
+ * last update 12.05.29.
  *
  */
 public class SimpleCalendarView extends TableLayout
@@ -73,7 +73,7 @@ public class SimpleCalendarView extends TableLayout
 
 		helper = new MonthDisplayHelper(currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), Calendar.SUNDAY);
 
-		TableRow.LayoutParams rowParams = new TableRow.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+		TableRow.LayoutParams rowParams = new TableRow.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		rowParams.weight = 1f;
 		rowParams.gravity = Gravity.CENTER_VERTICAL;
 		rowParams.setMargins(0, 0, 0, 0);

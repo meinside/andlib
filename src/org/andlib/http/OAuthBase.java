@@ -10,19 +10,21 @@ import org.andlib.helpers.Logger;
 import org.andlib.helpers.StringCodec;
 
 import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 
 /**
+ * @author meinside@gmail.com
+ * @since 2009.10.07.
+ *
  * OAuth base class
  * <br>
  * <br>
  * currently using Apache Http library due to <a href="http://code.google.com/p/android/issues/detail?id=6684">this issue</a>
  * <br>
  * <br>
- * last update: 2010.11.10.
+ * last update: 2012.05.29.
  * 
- * @author meinside@gmail.com
- * @since 2009.10.07.
- *
  */
 public class OAuthBase
 {
@@ -87,9 +89,9 @@ public class OAuthBase
 			
 			this.isAuthorized = true;
 		}
-		
-		ApacheHttpUtility.setConnectionTimeout(100000);
-		ApacheHttpUtility.setSocketTimeoutMillis(100000);
+
+		ApacheHttpUtility.setConnectionTimeout(OAUTH_DEFAULT_CONNECTION_TIMEOUT);
+		ApacheHttpUtility.setSocketTimeoutMillis(OAUTH_DEFAULT_SOCKET_TIMEOUT);
 	}
 	
 	/**
@@ -114,7 +116,7 @@ public class OAuthBase
 		}
 		return null;
 	}
-	
+
 	/**
 	 * normalizes given url
 	 * 
@@ -287,13 +289,13 @@ public class OAuthBase
 	}
 
 	/**
-	 * request OAuth token
+	 * request auth url for user
 	 * 
-	 * @return
+	 * @return id of AsyncHttpTask
 	 */
-	private HashMap<String, String> requestOAuthToken()
+	final public String requestUserAuthUrl(final AuthUrlListener listener)
 	{
-		//reset oauth token
+		//request and update oauth token/secret value
 		this.oauthToken = "";
 		this.oauthTokenSecret = "";
 
@@ -311,24 +313,58 @@ public class OAuthBase
 		//post with auth header
 		HashMap<String, String> requestHeader = new HashMap<String, String>();
 		requestHeader.put("Authorization", generateAuthHeader(requestTokenHash));
-		SimpleHttpResponse response = ApacheHttpUtility.getInstance().post(this.requestTokenUrl, requestHeader, null);
-		if(response != null)
-		{
-			if(response.getHttpStatusCode() == 200)
-				return convertStringParamToMap(response.getHttpResponseBodyAsString());
-			else
-				Logger.e("auth token request error: " + response.getHttpStatusCode() + " (" + response.getHttpResponseBodyAsString() + ")");
-		} 
-		return null;
+		
+		return ApacheHttpUtility.getInstance().postAsync(new Handler(){
+			@Override
+			public void handleMessage(Message msg)
+			{
+				Log.e("test", "msg = " + msg + ", data = " + msg.getData());	//test
+
+				SimpleHttpResponse response = (SimpleHttpResponse)msg.getData().getParcelable(ApacheHttpUtility.ASYNC_HTTP_RESULT);
+				if(response.getHttpStatusCode() == 200)
+				{
+					HashMap<String, String> oauthTokenHash = convertStringParamToMap(response.getHttpResponseBodyAsString());
+					if(oauthTokenHash != null)
+					{
+						oauthToken = oauthTokenHash.get("oauth_token");
+						oauthTokenSecret = oauthTokenHash.get("oauth_token_secret");
+						
+						String userAuthUrl = authorizeUrl + "?oauth_token=" + oauthToken;
+						
+						Logger.v("user auth url = " + userAuthUrl);
+
+						listener.authUrlReceived(userAuthUrl);
+					}
+					else
+						listener.authUrlReceiveFailed(200, "returned params are malformed: " + response.getHttpResponseBodyAsString());
+				}
+				else
+				{
+					listener.authUrlReceiveFailed(response.getHttpStatusCode(), response.getHttpResponseBodyAsString());
+				}
+			}}, this.requestTokenUrl, requestHeader, null);
 	}
-	
+
 	/**
-	 * request access token
+	 * override this function to retrieve some more values from service provider's post-authorization response
 	 * 
-	 * @param verifier
-	 * @return
+	 * @param values
 	 */
-	private HashMap<String, String> requestAccessToken(String verifier)
+	protected void retrieveValuesAfterAuthorization(HashMap<String, String> values)
+	{
+		this.accessToken = values.get("oauth_token");
+		this.accessTokenSecret = values.get("oauth_token_secret");
+		
+		Logger.v("retrieved: oauth_token = " + this.accessToken + ", oauth_token_secret = " + this.accessTokenSecret);
+	}
+
+	/**
+	 * authorize user with given verifier
+	 * 
+	 * @param verifier PIN retrieved from service provider
+	 * @return id of AsyncHttpTask
+	 */
+	final public String authorizeWithOAuthVerifier(final String verifier, final AuthorizationListener authListener)
 	{
 		HashMap<String, String> requestTokenHash = new HashMap<String, String>();
 		requestTokenHash.put("oauth_consumer_key", this.consumerKey);
@@ -345,71 +381,27 @@ public class OAuthBase
 		//post with auth header
 		HashMap<String, String> requestHeader = new HashMap<String, String>();
 		requestHeader.put("Authorization", generateAuthHeader(requestTokenHash));
-		SimpleHttpResponse response = ApacheHttpUtility.getInstance().post(this.accessTokenUrl, requestHeader, null);
-		if(response != null)
-		{
-			if(response.getHttpStatusCode() == 200)
+		return ApacheHttpUtility.getInstance().postAsync(new Handler(){
+			@Override
+			public void handleMessage(Message msg)
 			{
-				Logger.v("received access token: " + response.getHttpResponseBodyAsString());
+				SimpleHttpResponse response = (SimpleHttpResponse)msg.getData().getParcelable(ApacheHttpUtility.ASYNC_HTTP_RESULT);
+				if(response.getHttpStatusCode() == 200)
+				{
+					HashMap<String, String> accessTokenHash = convertStringParamToMap(response.getHttpResponseBodyAsString());
+					if(accessTokenHash != null)
+					{
+						retrieveValuesAfterAuthorization(accessTokenHash);
+						isAuthorized = true;
 
-				return convertStringParamToMap(response.getHttpResponseBodyAsString());
-			}
-			else
-				Logger.e("access token request error: " + response.getHttpStatusCode() + " (" + response.getHttpResponseBodyAsString() + ")");
-		} 
-		return null;
-	}
-	
-	/**
-	 * get auth url for user
-	 * 
-	 * @return
-	 */
-	final public String getUserAuthUrl()
-	{
-		//request and update oauth token/secret value
-		HashMap<String, String> oauthTokenHash = requestOAuthToken();
-		if(oauthTokenHash != null)
-		{
-			this.oauthToken = oauthTokenHash.get("oauth_token");
-			this.oauthTokenSecret = oauthTokenHash.get("oauth_token_secret");
-			return this.authorizeUrl + "?oauth_token=" + this.oauthToken;
-		}
-		else
-			return null;
-	}
-	
-	/**
-	 * override this function to retrieve some more values from service provider's post-authorization response
-	 * 
-	 * @param values
-	 */
-	protected void retrieveValuesAfterAuthorization(HashMap<String, String> values)
-	{
-		this.accessToken = values.get("oauth_token");
-		this.accessTokenSecret = values.get("oauth_token_secret");
-		
-		Logger.v("oauth_token = " + this.accessToken + ", oauth_token_secret = " + this.accessTokenSecret);
-	}
-	
-	/**
-	 * authorize user with given verifier
-	 * 
-	 * @param verifier PIN retrieved from service provider
-	 * @return
-	 */
-	final public boolean authorizeWithOAuthVerifier(String verifier)
-	{
-		HashMap<String, String> returnedAccessToken = requestAccessToken(verifier);
-		if(returnedAccessToken != null)
-		{
-			retrieveValuesAfterAuthorization(returnedAccessToken);
-			this.isAuthorized = true;
-			return true;
-		}
-		else
-			Logger.e("authorize with oauth verifier failed");
-		return false;
+						authListener.authorizationSucceeded();
+					}
+					else
+						authListener.authorizationFailed(200, "returned params are malformed: " + response.getHttpResponseBodyAsString());
+				}
+				else
+					authListener.authorizationFailed(response.getHttpStatusCode(), response.getHttpResponseBodyAsString());
+			}}, this.accessTokenUrl, requestHeader, null);
 	}
 	
 	/**
@@ -431,43 +423,6 @@ public class OAuthBase
 	{
 		Random rand = new Random(System.currentTimeMillis());
 		return StringCodec.md5sum("" + rand.nextLong());
-	}
-	
-	/**
-	 * send synchronous GET request to the service provider with essential header values
-	 * 
-	 * @param url
-	 * @param params
-	 * @return null if not authorized or fails
-	 */
-	final public SimpleHttpResponse get(String url, HashMap<String, String> params)
-	{
-		if(!this.isAuthorized)
-			return null;
-		
-		HashMap<String, String> requestTokenHash = new HashMap<String, String>();
-		requestTokenHash.put("oauth_consumer_key", this.consumerKey);
-		requestTokenHash.put("oauth_token", this.accessToken);
-		requestTokenHash.put("oauth_signature_method", "HMAC-SHA1");
-		requestTokenHash.put("oauth_timestamp", getTimestamp());
-		requestTokenHash.put("oauth_nonce", getNonce());
-		requestTokenHash.put("oauth_version", "1.0");
-		
-		//set signature
-		requestTokenHash.put("oauth_signature", generateAccessSignature(generateSignatureBaseString("GET", url, requestTokenHash, params)));
-		
-		//get with auth header
-		HashMap<String, String> requestHeader = new HashMap<String, String>();
-		requestHeader.put("Authorization", generateAuthHeader(requestTokenHash));
-		SimpleHttpResponse response = ApacheHttpUtility.getInstance().get(url, requestHeader, params);
-		if(response != null)
-		{
-			if(response.getHttpStatusCode() != 200)
-				Logger.e("get error: " + response.getHttpStatusCode() + " (" + response.getHttpResponseBodyAsString() + ")");
-
-			return response;
-		}
-		return null;
 	}
 
 	/**
@@ -499,71 +454,6 @@ public class OAuthBase
 		requestHeader.put("Authorization", generateAuthHeader(requestTokenHash));
 		
 		return ApacheHttpUtility.getInstance().getAsync(resultHandler, url, requestHeader, params);
-	}
-	
-	/**
-	 * send synchronous POST request to the service provider with essential header values
-	 * 
-	 * @param url
-	 * @param params
-	 * @return null if not authorized or fails
-	 */
-	final public SimpleHttpResponse post(String url, HashMap<String, Object> params)
-	{
-		if(!this.isAuthorized)
-			return null;
-
-		//check file existence
-		boolean fileExists = false;
-		if(params != null)
-		{
-			for(String key: params.keySet())
-			{
-				if(params.get(key).getClass() == File.class)
-				{
-					fileExists = true;
-					break;
-				}
-			}
-		}
-
-		HashMap<String, String> requestTokenHash = new HashMap<String, String>();
-		requestTokenHash.put("oauth_consumer_key", this.consumerKey);
-		requestTokenHash.put("oauth_token", this.accessToken);
-		requestTokenHash.put("oauth_signature_method", "HMAC-SHA1");
-		requestTokenHash.put("oauth_timestamp", getTimestamp());
-		requestTokenHash.put("oauth_nonce", getNonce());
-		requestTokenHash.put("oauth_version", "1.0");
-		
-		//set signature
-		if(fileExists)
-		{
-			requestTokenHash.put("oauth_signature", generateAccessSignature(generateSignatureBaseString("POST", url, requestTokenHash, null)));
-		}
-		else
-		{
-			HashMap<String, String> paramHash = null;
-			if(params != null)
-			{
-				paramHash = new HashMap<String, String>();
-				for(String key: params.keySet())
-					paramHash.put(key, params.get(key).toString());
-			}
-			requestTokenHash.put("oauth_signature", generateAccessSignature(generateSignatureBaseString("POST", url, requestTokenHash, paramHash)));
-		}
-		
-		//post with auth header
-		HashMap<String, String> requestHeader = new HashMap<String, String>();
-		requestHeader.put("Authorization", generateAuthHeader(requestTokenHash));
-		SimpleHttpResponse response = ApacheHttpUtility.getInstance().post(url, requestHeader, params);
-		if(response != null)
-		{
-			if(response.getHttpStatusCode() != 200)
-				Logger.e("post error: " + response.getHttpStatusCode() + " (" + response.getHttpResponseBodyAsString() + ")");
-
-			return response;
-		}
-		return null;
 	}
 
 	/**
@@ -672,5 +562,27 @@ public class OAuthBase
 	final public void cancelAsyncTask(String taskId)
 	{
 		ApacheHttpUtility.getInstance().cancelAsyncHttpTask(taskId);
+	}
+
+	/**
+	 * listener for receiving auth url
+	 * @author meinside
+	 *
+	 */
+	public interface AuthUrlListener
+	{
+		void authUrlReceiveFailed(int errorCode, String errorMessage);
+		void authUrlReceived(String url);
+	}
+
+	/**
+	 * listener for authorization with pin
+	 * @author meinside
+	 *
+	 */
+	public interface AuthorizationListener
+	{
+		void authorizationFailed(int errorCode, String errorMessage);
+		void authorizationSucceeded();
 	}
 }
