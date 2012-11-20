@@ -4,6 +4,7 @@ import org.andlib.helpers.Logger;
 import org.andlib.http.OAuthBase;
 import org.andlib.http.OAuthBase.AuthUrlListener;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.webkit.WebSettings;
@@ -16,7 +17,7 @@ import android.webkit.WebViewClient;
  * @author meinside@gmail.com
  * @since 10.11.07.
  * 
- * last update 12.05.29.
+ * last update 12.11.20.
  *
  */
 public abstract class OAuthAuthView extends WebView
@@ -55,6 +56,7 @@ public abstract class OAuthAuthView extends WebView
 	 * 
 	 * @param context
 	 */
+	@SuppressLint("SetJavaScriptEnabled")
 	private void loadAuthPage(Context context)
 	{
 		if(isInEditMode())
@@ -74,7 +76,6 @@ public abstract class OAuthAuthView extends WebView
 		if(oauth != null)
 		{
 			oauth.requestUserAuthUrl(new AuthUrlListener(){
-				@Override
 				public void authUrlReceiveFailed(int errorCode, String errorMessage)
 				{
 					Logger.e("receiving auth url failed - " + errorCode + ", " + errorMessage);
@@ -82,7 +83,6 @@ public abstract class OAuthAuthView extends WebView
 					onAuthUrlError(errorCode, errorMessage);
 				}
 
-				@Override
 				public void authUrlReceived(String url)
 				{
 					loadUrl(url);

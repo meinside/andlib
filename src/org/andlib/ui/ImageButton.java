@@ -30,7 +30,7 @@ import android.widget.Button;
  * @author meinside@gmail.com
  * @since 10.11.22.
  * 
- * last update 11.05.25.
+ * last update 12.11.20.
  *
  */
 public class ImageButton extends Button
@@ -178,7 +178,6 @@ public class ImageButton extends Button
 			changeToDisabledState();
 		
 		setOnTouchListener(new OnTouchListener(){
-			@Override
 			public boolean onTouch(View view, MotionEvent event)
 			{
 				if(!isEnabled())

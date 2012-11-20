@@ -23,7 +23,7 @@ import android.webkit.MimeTypeMap;
  * @author meinside@gmail.com
  * @since 09.10.25.
  * 
- * last update 11.03.10.
+ * last update 12.11.20.
  *
  */
 public class SimpleHttpResponse implements Parcelable
@@ -198,7 +198,6 @@ public class SimpleHttpResponse implements Parcelable
 	/* (non-Javadoc)
 	 * @see android.os.Parcelable#describeContents()
 	 */
-	@Override
 	public int describeContents()
 	{
 		return 0;
@@ -207,7 +206,6 @@ public class SimpleHttpResponse implements Parcelable
 	/* (non-Javadoc)
 	 * @see android.os.Parcelable#writeToParcel(android.os.Parcel, int)
 	 */
-	@Override
 	public void writeToParcel(Parcel dest, int flags)
 	{
 		//http status code

@@ -12,7 +12,7 @@ import android.os.Handler;
  * @author meinside@gmail.com
  * @since 10.11.04.
  * 
- * last update 10.11.05.
+ * last update 12.11.20.
  *
  */
 public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListener
@@ -114,7 +114,6 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 			if(listener != null && handler != null)
 			{
 				handler.post(new Runnable(){
-					@Override
 					public void run()
 					{
 						listener.onStartRecording();
@@ -139,7 +138,6 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 			if(listener != null && handler != null)
 			{
 				handler.post(new Runnable(){
-					@Override
 					public void run()
 					{
 						listener.onErrorRecording(recorderState);
@@ -189,7 +187,6 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 		if(listener != null && handler != null)
 		{
 			handler.post(new Runnable(){
-				@Override
 				public void run()
 				{
 					listener.onStopRecording(recorderState);
@@ -250,7 +247,6 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 	/* (non-Javadoc)
 	 * @see android.media.MediaRecorder.OnInfoListener#onInfo(android.media.MediaRecorder, int, int)
 	 */
-	@Override
 	public void onInfo(MediaRecorder mr, int what, int extra)
 	{
 		recorderState = what;
@@ -260,7 +256,6 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 			if(listener != null && handler != null)
 			{
 				handler.post(new Runnable(){
-					@Override
 					public void run()
 					{
 						listener.onErrorRecording(recorderState);
@@ -272,7 +267,6 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 			if(listener != null && handler != null)
 			{
 				handler.post(new Runnable(){
-					@Override
 					public void run()
 					{
 						listener.onStopRecording(recorderState);
@@ -290,7 +284,6 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 	/* (non-Javadoc)
 	 * @see android.media.MediaRecorder.OnErrorListener#onError(android.media.MediaRecorder, int, int)
 	 */
-	@Override
 	public void onError(MediaRecorder mr, int what, int extra)
 	{
 		recorderState = what;
@@ -300,7 +293,6 @@ public abstract class MediaRecorderBase implements OnErrorListener, OnInfoListen
 			if(listener != null && handler != null)
 			{
 				handler.post(new Runnable(){
-					@Override
 					public void run()
 					{
 						listener.onErrorRecording(recorderState);

@@ -23,7 +23,7 @@ import android.widget.TextView;
  * @author meinside@gmail.com
  * @since 10.11.15.
  * 
- * last update 12.05.29.
+ * last update 12.11.20.
  *
  */
 public class SimpleCalendarView extends TableLayout
@@ -90,7 +90,6 @@ public class SimpleCalendarView extends TableLayout
 				cell.setTag(i * NUM_COLUMNS + j);	//save row+column index as tag
 
 				cell.setOnClickListener(new OnClickListener(){
-					@Override
 					public void onClick(View cell)
 					{
 						int row = (Integer)cell.getTag() / NUM_COLUMNS;

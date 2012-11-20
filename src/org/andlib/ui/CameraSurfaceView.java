@@ -17,7 +17,7 @@ import android.view.SurfaceView;
  * @author meinside@gmail.com
  * @since 10.03.17.
  * 
- * last update 12.05.29.
+ * last update 12.11.20.
  *
  */
 public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Camera.PictureCallback, Camera.ShutterCallback, Camera.PreviewCallback
@@ -78,7 +78,6 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 	/**
 	 * override this function to alter camera parameters (preview size, picture size, and so on)
 	 */
-	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
 	{
 		Logger.v("surfaceChanged");
@@ -96,7 +95,6 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 		camera.startPreview();
 	}
 
-	@Override
 	public void surfaceCreated(SurfaceHolder holder)
 	{
 		Logger.v("surfaceCreated");
@@ -112,7 +110,6 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 		}
 	}
 
-	@Override
 	public void surfaceDestroyed(SurfaceHolder holder)
 	{
 		Logger.v("surfaceDestroyed");
@@ -144,19 +141,16 @@ public abstract class CameraSurfaceView extends SurfaceView implements SurfaceHo
 	/**
 	 * implement this to do something with picture
 	 */
-	@Override
 	abstract public void onPictureTaken(byte[] data, Camera camera);
 
 	/**
 	 * implement this to do something with preview frame
 	 */
-	@Override
 	abstract public void onPreviewFrame(byte[] data, Camera camera);
 
 	/**
 	 * override this function to do something more on shutter
 	 */
-	@Override
 	public void onShutter()
 	{
 		Logger.v("onShutter");
