@@ -15,7 +15,7 @@ import android.os.AsyncTask;
  * @author meinside@gmail.com
  * @since 10.10.28.
  * 
- * last update 11.03.14.
+ * last update 13.06.12.
  *
  */
 public class MultipleSoundPlayer<F> extends SoundPlayer
@@ -105,6 +105,14 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 		private F currentSound;
 
 		@Override
+		protected void onCancelled() {
+			if(listener != null)
+				listener.allSoundPlaysFinished(false);
+
+			super.onCancelled();
+		}
+
+		@Override
 		protected void onPreExecute()
 		{
 			super.onPreExecute();
@@ -181,7 +189,7 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 
 			//all sound plays were finished
 			if(listener != null)
-				listener.allSoundPlaysFinished();
+				listener.allSoundPlaysFinished(true);
 
 			return null;
 		}
@@ -217,7 +225,7 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 		/**
 		 * 
 		 */
-		public void allSoundPlaysFinished();
+		public void allSoundPlaysFinished(boolean finishedSuccessfully);
 
 		/**
 		 * 
