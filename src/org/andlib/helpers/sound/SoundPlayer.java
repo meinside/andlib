@@ -5,6 +5,7 @@ import org.andlib.helpers.ResourceHelper;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
@@ -18,9 +19,9 @@ import android.net.Uri;
  *  - http://www.mail-archive.com/android-developers@googlegroups.com/msg32581.html
  * 
  * @author meinside@gmail.com
- * @since 10.02.28.
+ * @since 2010.02.28.
  * 
- * last update 11.03.10.
+ * last update 2014.03.14.
  *
  */
 public class SoundPlayer
@@ -34,6 +35,9 @@ public class SoundPlayer
 	
 	protected float leftVolume, rightVolume;
 
+	protected int audioStreamType = AudioManager.STREAM_MUSIC;
+	
+	protected boolean isPaused = false;
 	
 	/**
 	 * 
@@ -55,6 +59,16 @@ public class SoundPlayer
 		
 		leftVolume = 1.0f;
 		rightVolume = 1.0f;
+	}
+
+	/**
+	 * change audio stream type (takes effect when called before play())
+	 * 
+	 * @param newAudioStreamType default: AudioManager.STREAM_MUSIC
+	 */
+	public void setAudioStreamType(int newAudioStreamType)
+	{
+		audioStreamType = newAudioStreamType;
 	}
 
 	/**
@@ -151,7 +165,9 @@ public class SoundPlayer
 		try
         {
 			player = MediaPlayer.create(context, resid);
+			player.setAudioStreamType(audioStreamType);
 			setListeners();
+
 			player.setVolume(leftVolume, rightVolume);
 			player.start();
         }
@@ -162,6 +178,7 @@ public class SoundPlayer
 	}
 	
 	/**
+	 * play a sound file from the apk
 	 * 
 	 * @param context
 	 * @param type (ex: raw/sound.mp3 => "raw")
@@ -169,18 +186,20 @@ public class SoundPlayer
 	 */
 	synchronized public void play(Context context, String type, String filename)
 	{
-		Logger.v("trying to play: " + filename);
+		Logger.v("trying to play: " + type + "/" + filename);
 
 		stop();
 		
 		try
         {
 			player = new MediaPlayer();
+			player.setAudioStreamType(audioStreamType);
 			setListeners();
+
 			AssetFileDescriptor afd = ResourceHelper.getResourceAsFd(context, filename, type);
-			//???: MediaPlayer.setDataSource(FileDescriptor) function always fails here
 	        player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 	        afd.close();
+
 	        player.prepare();
 	        player.setVolume(leftVolume, rightVolume);
 			player.start();
@@ -205,8 +224,11 @@ public class SoundPlayer
 		try
         {
 			player = new MediaPlayer();
+			player.setAudioStreamType(audioStreamType);
 			setListeners();
+
 			player.setDataSource(filepath);
+
 			player.prepare();
 			player.setVolume(leftVolume, rightVolume);
 			player.start();
@@ -232,7 +254,9 @@ public class SoundPlayer
 		try
         {
 			player = MediaPlayer.create(context, fileuri);
+			player.setAudioStreamType(audioStreamType);
 			setListeners();
+
 			player.setVolume(leftVolume, rightVolume);
 			player.start();
         }
@@ -240,6 +264,34 @@ public class SoundPlayer
         {
         	Logger.e(e.toString());
         }
+	}
+
+	/**
+	 * play given asset file descriptor
+	 * 
+	 * @param afd caller of this function should close this descriptor
+	 */
+	synchronized public void play(AssetFileDescriptor afd)
+	{
+		Logger.v("trying to play: " + afd.toString());
+		
+		stop();
+		
+		try
+		{
+			player = new MediaPlayer();
+			player.setAudioStreamType(audioStreamType);
+			player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+			setListeners();
+
+			player.prepare();
+			player.setVolume(leftVolume, rightVolume);
+			player.start();
+		}
+		catch(Exception e)
+		{
+			Logger.e(e.toString());
+		}
 	}
 	
 	/**
@@ -271,5 +323,79 @@ public class SoundPlayer
 				player = null;
 			}
 		}
+
+		isPaused = false;
+	}
+
+	/**
+	 * 
+	 */
+	synchronized public void pause()
+	{
+		try
+		{
+			if(player != null)
+			{
+				if(player.isPlaying())
+				{
+					player.pause();
+					isPaused = true;
+					
+					Logger.v("paused previously played sound");
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			Logger.e(e.toString());
+		}
+	}
+
+	/**
+	 * 
+	 */
+	synchronized public void resume()
+	{
+		try
+		{
+			if(player != null)
+			{
+				if(isPaused)
+				{
+					player.start();
+					isPaused = false;
+					
+					Logger.v("resumed previously played sound");
+				}
+				else
+				{
+					Logger.v("cannot resume - not paused yet");
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			Logger.e(e.toString());
+		}
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	synchronized public boolean isPlaying()
+	{
+		if(player != null)
+			return player.isPlaying();
+		return false;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	synchronized public boolean isPaused()
+	{
+		return isPaused;
 	}
 }

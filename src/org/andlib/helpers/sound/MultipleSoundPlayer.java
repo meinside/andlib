@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.andlib.helpers.Logger;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.os.AsyncTask;
 
 
@@ -13,9 +14,9 @@ import android.os.AsyncTask;
  * for playing multiple sound files in a row
  * 
  * @author meinside@gmail.com
- * @since 10.10.28.
+ * @since 2010.10.28.
  * 
- * last update 13.06.12.
+ * last update 2014.03.14.
  *
  */
 public class MultipleSoundPlayer<F> extends SoundPlayer
@@ -66,7 +67,7 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 
 	/**
 	 * 
-	 * @param soundFiles an ArrayList of type: Integer(resource id), String(file path), or File
+	 * @param soundFiles an ArrayList of type: Integer(resource id), String(file path), File, or AssetFileDescriptor
 	 * @param delayTimeMillis
 	 * @param gapTimeMillis
 	 * @param isFixedRate
@@ -155,6 +156,10 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 				else if(currentArgClass == File.class)
 				{
 					play(((File)currentSound).getAbsolutePath());
+				}
+				else if(currentArgClass == AssetFileDescriptor.class)
+				{
+					play((AssetFileDescriptor)currentSound);
 				}
 				else
 				{

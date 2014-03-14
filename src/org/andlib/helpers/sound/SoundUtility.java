@@ -12,9 +12,9 @@ import android.media.MediaPlayer;
  * various utility functions for audio play
  * 
  * @author meinside@gmail.com
- * @since 10.10.29.
+ * @since 2010.10.29.
  * 
- * last update 10.10.31.
+ * last update 2014.03.14.
  *
  */
 public class SoundUtility
@@ -22,7 +22,7 @@ public class SoundUtility
 	/**
 	 * 
 	 * @param context
-	 * @param soundFile sound file object (can be one of: Integer(resource id), String(file path), or File)
+	 * @param soundFile sound file object (can be one of: Integer(resource id), String(file path), File, or AssetFileDescriptor)
 	 * @return duration of given sound file in millis (0 if failed)
 	 */
 	public static long getDurationOfSound(Context context, Object soundFile)
@@ -45,6 +45,11 @@ public class SoundUtility
 			else if(currentArgClass == File.class)
 			{
 				mp.setDataSource(((File)soundFile).getAbsolutePath());
+			}
+			else if(currentArgClass == AssetFileDescriptor.class)
+			{
+				AssetFileDescriptor afd = (AssetFileDescriptor)soundFile;
+				mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 			}
 			mp.prepare();
 			millis = mp.getDuration();
