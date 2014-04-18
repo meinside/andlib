@@ -2,7 +2,6 @@ package org.andlib.helpers;
 
 import java.io.InputStream;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
@@ -112,16 +111,16 @@ final public class ResourceHelper
 	/**
 	 * get filepath of given content uri
 	 * 
-	 * @param activity
+	 * @param context
 	 * @param contentUri   
 	 * @param filter MediaStore.Images.Media.DATA, MediaStore.Audio.Media.DATA, ...
 	 * @return null if fails
 	 */
-	public static String getFilepathOfUri(Activity activity, Uri contentUri, String filter)
+	public static String getFilepathOfUri(Context context, Uri contentUri, String filter)
 	{
 		try
 		{
-		    Cursor cursor = activity.getContentResolver().query(contentUri, new String[]{filter}, null, null, null);
+		    Cursor cursor = context.getContentResolver().query(contentUri, new String[]{filter}, null, null, null);
 		    int columnIndex = cursor.getColumnIndexOrThrow(filter);
 		    cursor.moveToFirst();
 			return cursor.getString(columnIndex);
