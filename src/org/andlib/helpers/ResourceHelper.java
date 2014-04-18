@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.MediaStore;
 
 /**
  * 
