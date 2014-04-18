@@ -14,7 +14,7 @@ import android.provider.MediaStore;
  * @author meinside@gmail.com
  * @since 10.02.25.
  * 
- * last update 10.11.03.
+ * last update 2014.04.18.
  *
  */
 final public class ResourceHelper
@@ -115,16 +115,17 @@ final public class ResourceHelper
 	 * 
 	 * @param activity
 	 * @param contentUri   
+	 * @param filter MediaStore.Images.Media.DATA, MediaStore.Audio.Media.DATA, ...
 	 * @return null if fails
 	 */
-	public static String getFilepathOfUri(Activity activity, Uri contentUri)
+	public static String getFilepathOfUri(Activity activity, Uri contentUri, String filter)
 	{
-		Cursor cursor = activity.managedQuery(contentUri, new String[]{MediaStore.Images.Media.DATA}, null, null, null);
 		try
 		{
-			int index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-			cursor.moveToFirst();
-			return cursor.getString(index);
+		    Cursor cursor = activity.getContentResolver().query(contentUri, new String[]{filter}, null, null, null);
+		    int columnIndex = cursor.getColumnIndexOrThrow(filter);
+		    cursor.moveToFirst();
+			return cursor.getString(columnIndex);
 		}
 		catch(Exception e)
 		{
