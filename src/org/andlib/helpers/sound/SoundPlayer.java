@@ -21,7 +21,7 @@ import android.net.Uri;
  * @author meinside@gmail.com
  * @since 2010.02.28.
  * 
- * last update 2014.03.14.
+ * last update 2014.09.23.
  *
  */
 public class SoundPlayer
@@ -397,5 +397,32 @@ public class SoundPlayer
 	synchronized public boolean isPaused()
 	{
 		return isPaused;
+	}
+
+	/**
+	 * 
+	 * @return in msec
+	 */
+	public int getCurrentPosition()
+	{
+		return player.getCurrentPosition();
+	}
+
+	/**
+	 * 
+	 * @param position in msec
+	 */
+	public void setCurrentPosition(int position)
+	{
+		player.seekTo(position);
+	}
+
+	/**
+	 * 
+	 * @return in msec
+	 */
+	public int getDuration()
+	{
+		return player.getDuration();
 	}
 }
