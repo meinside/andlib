@@ -7,6 +7,7 @@ import org.andlib.helpers.Logger;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
+import android.net.Uri;
 import android.os.AsyncTask;
 
 
@@ -16,7 +17,7 @@ import android.os.AsyncTask;
  * @author meinside@gmail.com
  * @since 2010.10.28.
  * 
- * last update 2014.03.14.
+ * last update 2014.12.02.
  *
  */
 public class MultipleSoundPlayer<F> extends SoundPlayer
@@ -67,7 +68,7 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 
 	/**
 	 * 
-	 * @param soundFiles an ArrayList of type: Integer(resource id), String(file path), File, or AssetFileDescriptor
+	 * @param soundFiles an ArrayList of type: Integer(resource id), String(file path), File, AssetFileDescriptor, or Uri
 	 * @param delayTimeMillis
 	 * @param gapTimeMillis
 	 * @param isFixedRate
@@ -161,6 +162,10 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 				{
 					play((AssetFileDescriptor)currentSound);
 				}
+				else if(currentArgClass == Uri.class)
+				{
+					play(context, (Uri)currentSound);
+				}
 				else
 				{
 					Logger.e("not a proper type: " + currentArgClass.getName());
@@ -239,4 +244,3 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 		public void soundPlayFailed(F file);
 	}
 }
-

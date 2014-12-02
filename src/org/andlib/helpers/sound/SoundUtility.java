@@ -7,6 +7,7 @@ import org.andlib.helpers.Logger;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.net.Uri;
 
 /**
  * various utility functions for audio play
@@ -14,7 +15,7 @@ import android.media.MediaPlayer;
  * @author meinside@gmail.com
  * @since 2010.10.29.
  * 
- * last update 2014.03.14.
+ * last update 2014.12.02.
  *
  */
 public class SoundUtility
@@ -22,7 +23,7 @@ public class SoundUtility
 	/**
 	 * 
 	 * @param context
-	 * @param soundFile sound file object (can be one of: Integer(resource id), String(file path), File, or AssetFileDescriptor)
+	 * @param soundFile sound file object (can be one of: Integer(resource id), String(file path), File, AssetFileDescriptor, or Uri)
 	 * @return duration of given sound file in millis (0 if failed)
 	 */
 	public static long getDurationOfSound(Context context, Object soundFile)
@@ -50,6 +51,10 @@ public class SoundUtility
 			{
 				AssetFileDescriptor afd = (AssetFileDescriptor)soundFile;
 				mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+			}
+			else if(currentArgClass == Uri.class)
+			{
+				mp.setDataSource(context, (Uri)soundFile);
 			}
 			mp.prepare();
 			millis = mp.getDuration();
