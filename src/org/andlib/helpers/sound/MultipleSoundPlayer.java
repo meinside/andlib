@@ -67,11 +67,15 @@ public class MultipleSoundPlayer<F> extends SoundPlayer
 	}
 
 	/**
+	 * Play multiple sounds sequentially.
+	 * <br><br>
+	 * When AssetFileDescriptors are given as soundFiles, they should be explicitly closed
+	 * in the callback functions like soundPlayFinished() or allSoundPlaysFinished().
 	 * 
 	 * @param soundFiles an ArrayList of type: Integer(resource id), String(file path), File, AssetFileDescriptor, or Uri
-	 * @param delayTimeMillis
-	 * @param gapTimeMillis
-	 * @param isFixedRate
+	 * @param delayTimeMillis delay time before starting play
+	 * @param gapTimeMillis gap time between each sound
+	 * @param isFixedRate when true, gapTimeMillis will be the gap time between each sound's start point.
 	 */
 	synchronized public void playSounds(ArrayList<F> soundFiles, long delayTimeMillis, long gapTimeMillis, boolean isFixedRate)
 	{
