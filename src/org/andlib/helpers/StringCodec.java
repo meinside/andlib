@@ -27,7 +27,7 @@ import outsourced.Base64Coder;
  * @author meinside@gmail.com
  * @since 09.11.24.
  * 
- * last update 10.04.13.
+ * last update 2015.12.17.
  *
  */
 final public class StringCodec
@@ -43,7 +43,7 @@ final public class StringCodec
 		{
 			//return URLEncoder.encode(original, "utf-8");
 			//fixed: to comply with RFC-3986
-			return URLEncoder.encode(original, "utf-8").replace("+", "%20").replace("*", "%2A").replace("%7E", "~");
+			return URLEncoder.encode(original, "utf-8").replace("+", "%20").replace("*", "%2A").replace("~", "%7E");
 		}
 		catch(UnsupportedEncodingException e)
 		{
